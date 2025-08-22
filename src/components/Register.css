@@ -177,3 +177,10 @@ body {
     font-size: 24px;
   }
 }
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 2rem;
+        width: 90%;
+    }
+}
