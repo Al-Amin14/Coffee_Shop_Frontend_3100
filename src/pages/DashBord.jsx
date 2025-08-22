@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TotalSales from "../components/TotalSales";
 import OrdersToday from "../components/OrdersToday";
 import PopularItems from "../components/PopularItems";
 import Customer from "../components/Customer";
 import ProductAdd from "../components/ProductAdd";
+import { useNavigate } from "react-router-dom";
+
 
 
 const Dashboard = () => {
+
 
     const [productName, setProductName] = useState("");
     const [file, setFile] = useState(null);
@@ -36,6 +39,13 @@ const Dashboard = () => {
 
 
     };
+    
+    const navigate = useNavigate()
+    useEffect(() => {
+        if (!localStorage.getItem('user')) {
+            navigate('/login')
+        }
+    }, []);
 
     return (
         <div className="p-6">

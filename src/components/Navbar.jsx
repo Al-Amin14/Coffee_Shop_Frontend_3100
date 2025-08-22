@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaHome, FaList, FaShoppingCart, FaChartBar, FaPhone } from "react-icons/fa";
+import { FaHome, FaList, FaShoppingCart, FaChartBar, FaPhone, FaSignOutAlt } from "react-icons/fa";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -13,6 +13,11 @@ const Sidebar = () => {
     { name: "Chart List", icon: <FaChartBar />, path: "/charts" },
     { name: "Contact Us", icon: <FaPhone />, path: "/contact" },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div className="h-screen w-[20%] bg-[#4b2e2e] text-[#f5f0e6] flex flex-col shadow-lg">
@@ -39,6 +44,14 @@ const Sidebar = () => {
           );
         })}
       </nav>
+
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-[#7b4d35] hover:text-white m-4 mt-0 transition"
+      >
+        <span className="text-lg"><FaSignOutAlt /></span>
+        <span>Logout</span>
+      </button>
 
       <div className="p-4 border-t border-[#6f4e37] text-sm text-[#d1c4b2] text-center">
         © 2025 CoffeeSync
