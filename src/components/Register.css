@@ -1,0 +1,186 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #fdf6f0; 
+  font-family: 'Arial', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.register-container {
+  width: 100%;
+  max-width: 600px;   
+  padding: 20px;
+}
+
+.register-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 35px 30px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.register-title {
+  text-align: center;
+  color: #5a2d0c; 
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;  
+}
+.register-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.4;
+  display: block;  
+}
+
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #d87c28;
+}
+
+.form-group small {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+}
+
+
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.checkbox-group a {
+  color: #d87c28;
+  text-decoration: none;
+}
+
+
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background: #d87c28;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.3s ease;
+}
+
+.register-btn:hover {
+  background: #b96220;
+}
+
+
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+  color: #888;
+  position: relative;
+}
+
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.google-btn,
+.facebook-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.google-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.facebook-btn {
+  background: #3b5998;
+  color: #fff;
+}
+
+
+.signin-text {
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.signin-text a {
+  color: #d87c28;
+  text-decoration: none;
+}
+
+
+@media (max-width: 650px) {
+  .register-container {
+    max-width: 90%;
+  }
+
+  .register-card {
+    padding: 25px 20px;
+  }
+
+  .register-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 2rem;
+        width: 90%;
+    }
+}
