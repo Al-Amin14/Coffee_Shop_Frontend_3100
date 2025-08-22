@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthUser from "./AuthUser";
-import "./Register.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -42,15 +41,14 @@ export default function Register() {
 
     setError("");
 
-    
     const requestData = {
       name,
       email,
-      contact_number: contactNumber, 
+      contact_number: contactNumber,
       password,
-      role
+      role,
     };
-    
+
     console.log("Sending data:", requestData);
 
     http
@@ -61,8 +59,6 @@ export default function Register() {
       })
       .catch((err) => {
         console.error("Registration failed:", err);
-        console.error("Error response:", err.response?.data);
-        
         if (err.response?.data?.errors) {
           const validationErrors = err.response.data.errors;
           const errorMessages = Object.values(validationErrors).flat();
@@ -70,89 +66,128 @@ export default function Register() {
         } else {
           setError(
             err.response?.data?.message ||
-              "Something went wrong. Please try again."
+            "Something went wrong. Please try again."
           );
         }
       });
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h1 className="register-title">Create Your Account</h1>
-        <p className="register-subtitle">It only takes a minute.</p>
+    <div className="min-h-screen flex items-center justify-center bg-[#fdf6f0] p-4 w-full mx-auto">
+      <div className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-lg">
+        <h1 className="text-3xl font-bold text-[#5a2d0c] text-center mb-2">
+          Create Your Account
+        </h1>
+        <p className="text-center text-gray-500 mb-6 text-sm">
+          It only takes a minute.
+        </p>
 
-        {error && <p className="error-message">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+        )}
 
-        <form onSubmit={submitForm}>
-          <div className="form-group">
-            <label>Name</label>
+        <form onSubmit={submitForm} className="space-y-4">
+          {/* Name */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">Name</label>
             <input
               type="text"
               placeholder="Enter name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
             />
           </div>
 
-          <div className="form-group">
-            <label>Email address</label>
+          {/* Email */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">Email</label>
             <input
               type="email"
               placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
             />
           </div>
 
-          <div className="form-group">
-            <label>Contact Number</label>
+          {/* Contact Number */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">
+              Contact Number
+            </label>
             <input
               type="text"
               placeholder="Enter 11-digit contact number"
               value={contactNumber}
               onChange={handleContactNumberChange}
-              maxLength="11"
+              maxLength={11}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
             />
             {contactNumber.length > 0 && contactNumber.length !== 11 && (
-              <small className="validation-hint">
+              <small className="text-red-500 text-xs mt-1">
                 Contact number must be exactly 11 digits ({contactNumber.length}/11)
               </small>
             )}
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
+          {/* Password */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">Password</label>
             <input
               type="password"
               placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
             />
           </div>
 
-          <div className="form-group">
-            <label>Confirm Password</label>
+          {/* Confirm Password */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">
+              Confirm Password
+            </label>
             <input
               type="password"
               placeholder="Confirm password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
             />
           </div>
 
-          <div className="form-group">
-            <label>Your Role</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
+          {/* Role */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">Your Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+            >
               <option value="Manager">Manager</option>
               <option value="Customer">Customer</option>
             </select>
           </div>
 
-          <button type="submit" className="register-btn">
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full py-3 bg-[#d87c28] text-white font-bold rounded-lg hover:bg-[#b96220] transition-colors"
+          >
             Register
           </button>
         </form>
+
+        <p className="text-center text-gray-600 mt-4 text-sm">
+          Already have an account?{" "}
+          <span
+            className="text-[#d87c28] font-bold cursor-pointer hover:underline"
+            onClick={() => navigate("/login")}
+          >
+            Sign In
+          </span>
+        </p>
       </div>
     </div>
   );

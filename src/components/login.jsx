@@ -1,32 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./login.css";
 import AuthUser from "./AuthUser";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   const navigate = useNavigate();
-  const { http, setToken } = AuthUser(); 
+  const { http, setToken } = AuthUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
 
   const submitForm = (e) => {
-    e.preventDefault(); 
-
-   
+    e.preventDefault();
     setError("");
 
-    
     http
       .post("/login", { email, password })
       .then((res) => {
-        
         setToken(res.data.user, res.data.access_token);
         navigate("/dashboard");
       })
       .catch((err) => {
-       
         console.error("Login failed:", err);
         const message =
           err.response?.data?.message || "Invalid email or password";
@@ -35,68 +30,87 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <h1>Coffee Shop</h1>
-      <p>Brew success with seamless management</p>
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#f0eadd] p-4 mx-auto">
+      <div className="bg-[#fffaf0] w-full max-w-md p-8 rounded-2xl shadow-lg border border-[#e0d8cd]">
+        <h1 className="text-3xl font-bold text-[#6b4f4f] text-center mb-1">
+          Coffee Shop
+        </h1>
+        <p className="text-center text-[#a08c8c] mb-6 text-sm">
+          Brew success with seamless management
+        </p>
 
-      <form onSubmit={submitForm}>
-        
-        {error && <p className="error-message">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+        )}
 
-        <div className="form-group">
-          <label>Email Address</label>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <div className="input-wrapper">
+        <form onSubmit={submitForm} className="space-y-4">
+          {/* Email */}
+          <div className="flex flex-col">
+            <label className="text-[#a08c8c] font-bold mb-1">Email Address</label>
             <input
-              type={passwordVisible ? "text" : "password"}
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="px-4 py-2 border border-[#e0d8cd] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d28f5d] text-[#6b4f4f]"
               required
             />
-            <i
-              className={`password-toggle ${
-                passwordVisible ? "fa-eye-slash" : "fa-eye"
-              }`}
+          </div>
+
+          {/* Password */}
+          <div className="flex flex-col relative">
+            <label className="text-[#a08c8c] font-bold mb-1">Password</label>
+            <input
+              type={passwordVisible ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="px-4 py-2 border border-[#e0d8cd] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d28f5d] text-[#6b4f4f]"
+              required
+            />
+            <div
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#a08c8c] cursor-pointer"
               onClick={() => setPasswordVisible(!passwordVisible)}
-            ></i>
+            >
+              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+            </div>
           </div>
-        </div>
 
-        <div className="additional-options">
-          <div className="remember-me">
-            <input type="checkbox" id="remember" />
-            <label htmlFor="remember">Remember me</label>
+          {/* Additional options */}
+          <div className="flex justify-between items-center text-sm text-[#a08c8c]">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" />
+              Remember me
+            </label>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-[#d28f5d] font-bold hover:underline"
+            >
+              Forgot password?
+            </button>
           </div>
-          <a href="#" className="forgot-password">
-            Forgot password?
-          </a>
-        </div>
 
-        <button type="submit" className="submit-btn">
-          Sign In
-        </button>
+          {/* Sign In Button */}
+          <button
+            type="submit"
+            className="w-full py-3 bg-gradient-to-tr from-[#e59c69] to-[#d28f5d] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1"
+          >
+            Sign In
+          </button>
+        </form>
 
-        <p style={{ textAlign: "center", marginTop: "15px" }}>
-          Don't have an account?{" "}
-          <span
-            style={{ color: "#4CAF50", cursor: "pointer", fontWeight: "bold" }}
+        {/* Sign Up Section */}
+        <div className="mt-6 text-center">
+          <p className="text-[#6b4f4f] mb-2">Don't have an account?</p>
+          <button
             onClick={() => navigate("/register")}
+            className="w-full py-3 bg-[#d28f5d] text-white font-bold rounded-xl shadow-md hover:bg-[#e59c69] transition-colors"
           >
             Sign Up
-          </span>
-        </p>
-      </form>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

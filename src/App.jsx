@@ -1,6 +1,5 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Home from './pages/home'
+import React, { useEffect } from 'react'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Register from './components/registration'
 import Login from './components/login'
@@ -9,6 +8,8 @@ import Dashboard from './pages/DashBord'
 import ContactUs from './pages/ContactUs'
 
 const App = () => {
+  const navigate=useNavigate()
+  
   return (
     <div className='flex'>
       <Navbar />
