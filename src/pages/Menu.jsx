@@ -38,12 +38,11 @@ const MenuPage = () => {
 
     const navigate = useNavigate()
     useEffect(() => {
-        if (!localStorage.getItem('user')) {
+        if (!localStorage.getItem('token')) {
             navigate('/login')
         }
     }, []);
 
-    
     return (
         <div className="p-6 w-[70%]">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Coffee Menu</h1>

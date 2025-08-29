@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthUser from "./AuthUser";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { LoginContext } from "../context/login";
+import { useContext } from "react";
 
 function Login() {
   const navigate = useNavigate();
@@ -10,6 +13,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
+  const { loged, setLoged } = useContext(LoginContext);
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -19,6 +23,8 @@ function Login() {
       .post("/login", { email, password })
       .then((res) => {
         setToken(res.data.user, res.data.access_token);
+        setLoged(true);
+        toast.success("Login successful!");
         navigate("/dashboard");
       })
       .catch((err) => {
