@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const ContactUs = () => {
     const navigate=useNavigate()
     useEffect(() => {
-    if(!localStorage.getItem('user')){
+    if(!localStorage.getItem('token')){
       navigate('/login')
     }
   }, []);
