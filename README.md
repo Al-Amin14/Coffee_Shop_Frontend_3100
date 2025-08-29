@@ -7,8 +7,12 @@ https://www.figma.com/design/SvXCRA28QLWCbgFWzwbXhZ/A1_group07_Coffee_Shop?node-
 The objective of this project is to develop an efficient and user-friendly Coffee Shop Management System that streamlines operations such as order management, inventory control, sales tracking, and customer service. The system aims to enhance both customer experience and business efficiency by integrating modern technologies and automation.
 ## Collaborators
 
-1.Md. Shahadat Hossain </br>
-[![wakatime](https://wakatime.com/badge/user/3e03447a-8791-4526-b6ff-5bcb2cdcbb30/project/eb5a27b1-35c5-4cf9-bf3f-2a936bd9628e.svg)](https://wakatime.com/badge/user/3e03447a-8791-4526-b6ff-5bcb2cdcbb30/project/eb5a27b1-35c5-4cf9-bf3f-2a936bd9628e)
+1-> Md. Shahadat Hossain </br>
+[![wakatime](https://wakatime.com/badge/user/3e03447a-8791-4526-b6ff-5bcb2cdcbb30/project/eb5a27b1-35c5-4cf9-bf3f-2a936bd9628e.svg)](https://wakatime.com/badge/user/3e03447a-8791-4526-b6ff-5bcb2cdcbb30/project/eb5a27b1-35c5-4cf9-bf3f-2a936bd9628e)</br>
+
+2-> AL AMIN JIHAD  </br>
+[![wakatime](https://wakatime.com/badge/user/3da02b1c-7095-45c3-94fd-04673f582943/project/8b02b7d0-6130-4336-8031-e5e6d1e77aa0.svg)](https://wakatime.com/badge/user/3da02b1c-7095-45c3-94fd-04673f582943/project/8b02b7d0-6130-4336-8031-e5e6d1e77aa0)
+
 
 ## Target Audience
 The target audience includes coffee shop owners, managers, and staff who require a comprehensive digital solution to manage daily operations. It also caters to customers by providing an intuitive ordering and feedback system.
