@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthUser from "./AuthUser";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { LoginContext } from "../context/login";
-import { useContext } from "react";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
-  const { loged, setLoged } = useContext(LoginContext);
+  const { setLoged } = useContext(LoginContext);
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -22,11 +21,16 @@ function Login() {
     http
       .post("/login", { email, password })
       .then((res) => {
+<<<<<<< HEAD
         setToken(res.data.user, res.data.access_token);
         
         setLoged(true);
+=======
+        setToken(res.data.user, res.data.access_token); // store user & token
+        setLoged(true); // update context state
+>>>>>>> bef35036dd4f8c3512265800c8b283e9ad70ca14
         toast.success("Login successful!");
-        navigate("/dashboard");
+        navigate("/dashboard"); // navigate after login
       })
       .catch((err) => {
         console.error("Login failed:", err);
@@ -51,7 +55,7 @@ function Login() {
         )}
 
         <form onSubmit={submitForm} className="space-y-4">
-          {/* Email */}
+          
           <div className="flex flex-col">
             <label className="text-[#a08c8c] font-bold mb-1">Email Address</label>
             <input
@@ -64,7 +68,7 @@ function Login() {
             />
           </div>
 
-          {/* Password */}
+         
           <div className="flex flex-col relative">
             <label className="text-[#a08c8c] font-bold mb-1">Password</label>
             <input
@@ -83,7 +87,7 @@ function Login() {
             </div>
           </div>
 
-          {/* Additional options */}
+          
           <div className="flex justify-between items-center text-sm text-[#a08c8c]">
             <label className="flex items-center gap-2">
               <input type="checkbox" />
@@ -98,7 +102,7 @@ function Login() {
             </button>
           </div>
 
-          {/* Sign In Button */}
+         
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-tr from-[#e59c69] to-[#d28f5d] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1"
@@ -107,7 +111,7 @@ function Login() {
           </button>
         </form>
 
-        {/* Sign Up Section */}
+        
         <div className="mt-6 text-center">
           <p className="text-[#6b4f4f] mb-2">Don't have an account?</p>
           <button
@@ -123,3 +127,5 @@ function Login() {
 }
 
 export default Login;
+
+

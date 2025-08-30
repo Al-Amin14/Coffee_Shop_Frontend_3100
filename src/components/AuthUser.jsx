@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function AuthUser() {
   const navigate = useNavigate();
 
+  // Retrieve token & user from sessionStorage
   const getToken = () => {
     const tokenString = localStorage.getItem("token");
     return tokenString ? JSON.parse(tokenString) : null;
@@ -18,6 +20,7 @@ export default function AuthUser() {
   const [token, setToken] = useState(getToken());
   const [user, setUser] = useState(getUser());
 
+  // Save token & user, update state and navigate to dashboard
   const saveToken = (user, token) => {
     localStorage.setItem("token", JSON.stringify(token));
     localStorage.setItem("user", JSON.stringify(user));
@@ -26,13 +29,15 @@ export default function AuthUser() {
     navigate("/dashboard");
   };
 
+  // Logout function with redirect to homepage
   const logout = () => {
     localStorage.clear();
     setToken(null);
     setUser(null);
-    navigate("/login");
+    navigate("/"); // Redirect to homepage on logout
   };
 
+  // Create axios instance with token header if available
   const http = axios.create({
     baseURL: "http://localhost:8000/api",
     headers: {
@@ -45,7 +50,6 @@ export default function AuthUser() {
     setToken: saveToken,
     token,
     user,
-    getToken,
     http,
     logout,
   };
