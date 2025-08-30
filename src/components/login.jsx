@@ -23,6 +23,7 @@ function Login() {
       .post("/login", { email, password })
       .then((res) => {
         setToken(res.data.user, res.data.access_token);
+        
         setLoged(true);
         toast.success("Login successful!");
         navigate("/dashboard");

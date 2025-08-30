@@ -1,70 +1,80 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
-const coffeeMenu = [
-    {
-        id: 1,
-        name: "Espresso",
-        description: "Strong and bold single shot of coffee.",
-        price: "$3.00",
-        image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
-    },
-    {
-        id: 2,
-        name: "Cappuccino",
-        description: "Espresso with steamed milk and frothy foam.",
-        price: "$4.50",
-        image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
-    },
-    {
-        id: 3,
-        name: "Latte",
-        description: "Smooth blend of espresso and steamed milk.",
-        price: "$4.00",
-        image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
-    },
-    {
-        id: 4,
-        name: "Mocha",
-        description: "Espresso with chocolate, milk, and whipped cream.",
-        price: "$5.00",
-        image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
-    },
-];
-
+import axios from "axios"; // install axios if not yet: npm i axios
 
 const MenuPage = () => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
     useEffect(() => {
-        if (!localStorage.getItem('token')) {
-            navigate('/login')
+        if (!localStorage.getItem("token")) {
+            navigate("/login");
         }
+
+        // Fetch products from API
+        axios
+            .get("http://localhost:8000/api/allproducts")
+            .then((res) => {
+                if (res.data.success) {
+                    setProducts(res.data.products);
+                }
+            })
+            .catch((err) => console.error("Failed to fetch products:", err))
+            .finally(() => setLoading(false));
     }, []);
+
+    if (loading) {
+        return <div className="flex flex-col mx-auto items-center justify-center h-[60vh]">
+            <svg
+                className="animate-spin h-12 w-12 text-yellow-600 mb-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+            >
+                <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                ></circle>
+                <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+            </svg>
+            <span className="text-xl font-semibold text-gray-700">
+                Loading products...
+            </span>
+        </div>
+    }
 
     return (
         <div className="p-6 w-[70%]">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Coffee Menu</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {coffeeMenu.map((item) => (
+                {products.map((item) => (
                     <div
                         key={item.id}
                         className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
                     >
                         <img
-                            src={item.image}
-                            alt={item.name}
+                            src={item.image_path} // use API image
+                            alt={item.product_name}
                             className="w-full h-40 object-cover"
                         />
                         <div className="p-4">
                             <h2 className="text-xl font-semibold text-gray-800">
-                                {item.name}
+                                {item.product_name}
                             </h2>
                             <p className="text-gray-600 text-sm mb-2">{item.description}</p>
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-bold text-yellow-700">
-                                    {item.price}
+                                    ${item.price}
                                 </span>
                                 <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-lg transition">
                                     Add

@@ -6,12 +6,12 @@ export default function AuthUser() {
   const navigate = useNavigate();
 
   const getToken = () => {
-    const tokenString = sessionStorage.getItem("token");
+    const tokenString = localStorage.getItem("token");
     return tokenString ? JSON.parse(tokenString) : null;
   };
 
   const getUser = () => {
-    const userString = sessionStorage.getItem("user");
+    const userString = localStorage.getItem("user");
     return userString ? JSON.parse(userString) : null;
   };
 
@@ -19,15 +19,15 @@ export default function AuthUser() {
   const [user, setUser] = useState(getUser());
 
   const saveToken = (user, token) => {
-    sessionStorage.setItem("token", JSON.stringify(token));
-    sessionStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", JSON.stringify(token));
+    localStorage.setItem("user", JSON.stringify(user));
     setToken(token);
     setUser(user);
     navigate("/dashboard");
   };
 
   const logout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     setToken(null);
     setUser(null);
     navigate("/login");

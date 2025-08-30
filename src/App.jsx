@@ -22,7 +22,7 @@ const App = () => {
       <LoginContext.Provider value={{ loged, setLoged }}>
         <Navbar />
         <Routes>
-          <Route path='/' element={<Dashboard />} />
+          <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/menu' element={<MenuPage />} />
           <Route path='/contact' element={<ContactUs />} />
           <Route path='/register' element={<Register />} />

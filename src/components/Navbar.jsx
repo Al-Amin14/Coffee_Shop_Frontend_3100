@@ -11,16 +11,15 @@ const Sidebar = () => {
 
   const { loged, setLoged } = useContext(LoginContext)
 
-
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, path: "/" },
+    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
     { name: "Menu", icon: <FaList />, path: "/menu" },
     { name: "Add Product", icon: <FaPlus />, path: "/ProductAdd" }, // 🔹 Added here
     { name: "Orders", icon: <FaShoppingCart />, path: "/orders" },
     { name: "Chart List", icon: <FaChartBar />, path: "/charts" },
     { name: "Contact Us", icon: <FaPhone />, path: "/contact" },
   ];
-
+  
   const handleLogout = () => {
     if (confirm('Do you want to log out')) {
       localStorage.removeItem("token");
@@ -38,11 +37,10 @@ const Sidebar = () => {
       <div className="p-6 text-2xl font-bold text-center border-b border-[#6f4e37]">
         CoffeeSync
       </div>
-
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
-          return item.name == 'Dashboard' && localStorage.getItem('user')?.role == 'admin' ? ((
+          return (item.name == 'Dashboard' || item.name == 'Add Product') && JSON.parse(localStorage.getItem("user"))?.role == 'Manager' ? ((
             <button
               key={item.name}
               onClick={() => navigate(item.path)}
@@ -55,7 +53,7 @@ const Sidebar = () => {
               <span className="text-lg">{item.icon}</span>
               <span>{item.name}</span>
             </button>
-          )) : (item.name != 'Dashboard' && <button
+          )) : ((item.name != 'Dashboard' && item.name != 'Add Product') && <button
             key={item.name}
             onClick={() => navigate(item.path)}
             className={`flex items-center gap-3 w-full text-left p-3 rounded-lg transition 
