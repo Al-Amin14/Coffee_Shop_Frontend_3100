@@ -1,48 +1,96 @@
 import React, { useEffect, useState } from "react";
 import { FaCoffee, FaShoppingCart, FaPlus, FaMinus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import AuthUser from "../components/AuthUser";
+import toast from "react-hot-toast";
 
 const ChatList = () => {
-    const navigate=useNavigate()
-    const [items, setItems] = useState([
-        { id: 1, name: "Cappuccino", price: 4.5, qty: 1 },
-        { id: 2, name: "Latte", price: 5.0, qty: 2 },
-        { id: 3, name: "Espresso", price: 3.0, qty: 1 },
-    ]);
+    const navigate = useNavigate();
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    const { user } = AuthUser();
+
+    // 🟢 Fetch cart for logged-in user
+    const fetchCart = () => {
+        axios
+            .get(`http://localhost:8000/api/user-cart/${user.id}`, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+                },
+            })
+            .then((res) => {
+                if (res.data.success) {
+                    setItems(res.data.cart);
+                }
+            })
+            .catch((err) => {
+                console.error("Failed to fetch cart:", err);
+                toast.error("Failed to fetch cart.");
+            })
+            .finally(() => setLoading(false));
+    };
+
+    // 🟡 Increase quantity
+    const increaseQty = (cartId) => {
+        axios
+            .put(`http://localhost:8000/api/cart/increment/${cartId}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+                },
+            })
+            .then((res) => {
+                toast.success("Quantity increased");
+                fetchCart();
+            })
+            .catch(() => toast.error("Failed to increase quantity"));
+    };
+
+    // 🔴 Decrease quantity
+    const decreaseQty = (cartId) => {
+        axios
+            .put(`http://localhost:8000/api/cart/decrement/${cartId}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+                },
+            })
+            .then((res) => {
+                toast.success(res.data.message);
+                fetchCart();
+            })
+            .catch(() => toast.error("Failed to decrease quantity"));
+    };
+
+    // 🛒 Checkout
     const handleCheckout = () => {
         if (items.length === 0) {
-            alert("🛒 Your cart is empty!");
+            toast.error("🛒 Your cart is empty!");
             return;
         }
-
-        const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-        alert(`✅ Order placed!\n\nTotal: $${total.toFixed(2)}\nThank you for shopping ☕`);
-
-        setItems([]);
-    };
-
-    const increaseQty = (id) => {
-        setItems(items.map(item =>
-            item.id === id ? { ...item, qty: item.qty + 1 } : item
-        ));
-    };
-
-    const decreaseQty = (id) => {
-        setItems(items
-            .map(item =>
-                item.id === id ? { ...item, qty: Math.max(item.qty - 1, 0) } : item
-            )
-            .filter(item => item.qty > 0) // remove item if qty is 0
+        const total = items.reduce(
+            (sum, item) => sum + item.unit_price * item.quantity,
+            0
         );
+        toast.success(`✅ Order placed! Total: $${total.toFixed(2)}`);
+        setItems([]); // clear local state after checkout (or call API if needed)
     };
 
     useEffect(() => {
-        if(!localStorage.getItem('token')){
-            navigate('/login')
+        if (!localStorage.getItem("token")) {
+            navigate("/login");
+        } else {
+            fetchCart();
         }
     }, []);
-    
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-lg">Loading cart...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#f5f0e6] w-[60%] mx-auto flex items-center justify-center p-4">
@@ -50,10 +98,10 @@ const ChatList = () => {
                 {/* Header */}
                 <div className="bg-[#4e342e] text-[#f5f0e6] p-4 flex items-center gap-2">
                     <FaCoffee className="w-6 h-6" />
-                    <h1 className="text-lg font-semibold">Coffee Chat List</h1>
+                    <h1 className="text-lg font-semibold">Coffee Cart</h1>
                 </div>
 
-                {/* Chat List */}
+                {/* Cart List */}
                 <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto bg-[#f5f0e6]">
                     {items.length > 0 ? (
                         items.map((item) => (
@@ -62,9 +110,11 @@ const ChatList = () => {
                                 className="flex justify-between items-center bg-[#d7ccc8] rounded-xl px-4 py-3 shadow-sm"
                             >
                                 <div>
-                                    <p className="text-[#3e2723] font-semibold">{item.name}</p>
+                                    <p className="text-[#3e2723] font-semibold">
+                                        {item.product?.product_name}
+                                    </p>
                                     <p className="text-sm text-[#5d4037]">
-                                        ${item.price.toFixed(2)} each
+                                        ${item.unit_price} each
                                     </p>
                                 </div>
 
@@ -77,7 +127,7 @@ const ChatList = () => {
                                         <FaMinus />
                                     </button>
                                     <span className="font-bold text-[#3e2723] w-6 text-center">
-                                        {item.qty}
+                                        {item.quantity}
                                     </span>
                                     <button
                                         onClick={() => increaseQty(item.id)}
@@ -86,7 +136,7 @@ const ChatList = () => {
                                         <FaPlus />
                                     </button>
                                     <span className="text-[#4e342e] font-bold">
-                                        ${(item.qty * item.price).toFixed(2)}
+                                        ${(item.quantity * item.unit_price).toFixed(2)}
                                     </span>
                                 </div>
                             </div>
@@ -103,7 +153,7 @@ const ChatList = () => {
                     <span className="font-bold text-lg">
                         Total: $
                         {items
-                            .reduce((sum, item) => sum + item.price * item.qty, 0)
+                            .reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
                             .toFixed(2)}
                     </span>
                     <button

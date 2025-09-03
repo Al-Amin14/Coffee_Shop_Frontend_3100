@@ -34,7 +34,7 @@ export default function AuthUser() {
     localStorage.clear();
     setToken(null);
     setUser(null);
-    navigate("/"); // Redirect to homepage on logout
+    navigate("/login"); // Redirect to homepage on logout
   };
 
   // Create axios instance with token header if available

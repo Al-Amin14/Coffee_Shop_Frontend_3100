@@ -10,13 +10,8 @@ import AuthUser from "../components/AuthUser";
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-<<<<<<< HEAD
-
-  const { loged, setLoged } = useContext(LoginContext)
-=======
   const { loged, setLoged } = useContext(LoginContext);
   const { logout } = AuthUser();
->>>>>>> bef35036dd4f8c3512265800c8b283e9ad70ca14
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
@@ -47,11 +42,7 @@ const Sidebar = () => {
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
-<<<<<<< HEAD
           return (item.name == 'Dashboard' || item.name == 'Add Product') && JSON.parse(localStorage.getItem("user"))?.role == 'Manager' ? ((
-=======
-          return (
->>>>>>> bef35036dd4f8c3512265800c8b283e9ad70ca14
             <button
               key={item.name}
               onClick={() => navigate(item.path)}
@@ -61,7 +52,6 @@ const Sidebar = () => {
               <span className="text-lg">{item.icon}</span>
               <span>{item.name}</span>
             </button>
-<<<<<<< HEAD
           )) : ((item.name != 'Dashboard' && item.name != 'Add Product') && <button
             key={item.name}
             onClick={() => navigate(item.path)}
@@ -74,9 +64,6 @@ const Sidebar = () => {
             <span className="text-lg">{item.icon}</span>
             <span>{item.name}</span>
           </button>)
-=======
-          );
->>>>>>> bef35036dd4f8c3512265800c8b283e9ad70ca14
         })}
       </nav>
       {loged ? (

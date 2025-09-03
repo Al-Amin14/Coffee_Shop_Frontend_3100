@@ -21,14 +21,9 @@ function Login() {
     http
       .post("/login", { email, password })
       .then((res) => {
-<<<<<<< HEAD
         setToken(res.data.user, res.data.access_token);
-        
+
         setLoged(true);
-=======
-        setToken(res.data.user, res.data.access_token); // store user & token
-        setLoged(true); // update context state
->>>>>>> bef35036dd4f8c3512265800c8b283e9ad70ca14
         toast.success("Login successful!");
         navigate("/dashboard"); // navigate after login
       })
@@ -55,7 +50,7 @@ function Login() {
         )}
 
         <form onSubmit={submitForm} className="space-y-4">
-          
+
           <div className="flex flex-col">
             <label className="text-[#a08c8c] font-bold mb-1">Email Address</label>
             <input
@@ -68,7 +63,7 @@ function Login() {
             />
           </div>
 
-         
+
           <div className="flex flex-col relative">
             <label className="text-[#a08c8c] font-bold mb-1">Password</label>
             <input
@@ -87,7 +82,7 @@ function Login() {
             </div>
           </div>
 
-          
+
           <div className="flex justify-between items-center text-sm text-[#a08c8c]">
             <label className="flex items-center gap-2">
               <input type="checkbox" />
@@ -102,7 +97,7 @@ function Login() {
             </button>
           </div>
 
-         
+
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-tr from-[#e59c69] to-[#d28f5d] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1"
@@ -111,7 +106,7 @@ function Login() {
           </button>
         </form>
 
-        
+
         <div className="mt-6 text-center">
           <p className="text-[#6b4f4f] mb-2">Don't have an account?</p>
           <button
