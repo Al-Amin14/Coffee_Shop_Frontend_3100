@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,34 +6,38 @@ import { useNavigate } from "react-router-dom";
 export default function AuthUser() {
   const navigate = useNavigate();
 
+  // Retrieve token & user from sessionStorage
   const getToken = () => {
-    const tokenString = sessionStorage.getItem("token");
+    const tokenString = localStorage.getItem("token");
     return tokenString ? JSON.parse(tokenString) : null;
   };
 
   const getUser = () => {
-    const userString = sessionStorage.getItem("user");
+    const userString = localStorage.getItem("user");
     return userString ? JSON.parse(userString) : null;
   };
 
   const [token, setToken] = useState(getToken());
   const [user, setUser] = useState(getUser());
 
+  // Save token & user, update state and navigate to dashboard
   const saveToken = (user, token) => {
-    sessionStorage.setItem("token", JSON.stringify(token));
-    sessionStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", JSON.stringify(token));
+    localStorage.setItem("user", JSON.stringify(user));
     setToken(token);
     setUser(user);
     navigate("/dashboard");
   };
 
+  // Logout function with redirect to homepage
   const logout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     setToken(null);
     setUser(null);
-    navigate("/login");
+    navigate("/login"); // Redirect to homepage on logout
   };
 
+  // Create axios instance with token header if available
   const http = axios.create({
     baseURL: "http://localhost:8000/api",
     headers: {
@@ -45,7 +50,6 @@ export default function AuthUser() {
     setToken: saveToken,
     token,
     user,
-    getToken,
     http,
     logout,
   };
