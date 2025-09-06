@@ -58,11 +58,8 @@ const PaymentPage = () => {
 
       if (res.data.success) {
         setCartItems(res.data.cart);
-
-        // Calculate total in BDT, assuming unit_price is already in BDT
         const totalAmount = res.data.cart.reduce(
-          (sum, item) =>
-            sum + Number(item.unit_price) * Number(item.quantity),
+          (sum, item) => sum + Number(item.unit_price) * Number(item.quantity),
           0
         );
         setTotal(totalAmount);
@@ -80,13 +77,9 @@ const PaymentPage = () => {
   // Increase quantity
   const increaseQty = async (cartId) => {
     try {
-      await axios.put(
-        `http://localhost:8000/api/cart/increment/${cartId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${JSON.parse(token)}` },
-        }
-      );
+      await axios.put(`http://localhost:8000/api/cart/increment/${cartId}`, {}, {
+        headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+      });
       toast.success("Quantity increased");
       fetchCart();
     } catch {
@@ -97,13 +90,9 @@ const PaymentPage = () => {
   // Decrease quantity
   const decreaseQty = async (cartId) => {
     try {
-      await axios.put(
-        `http://localhost:8000/api/cart/decrement/${cartId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${JSON.parse(token)}` },
-        }
-      );
+      await axios.put(`http://localhost:8000/api/cart/decrement/${cartId}`, {}, {
+        headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+      });
       toast.success("Quantity decreased");
       fetchCart();
     } catch {
@@ -128,19 +117,16 @@ const PaymentPage = () => {
     setSuccess("");
 
     try {
-      // Convert items with amount in paisa (BDT * 100)
+      // Convert all items to correct Stripe format
       const payload = cartItems.map((item) => ({
         product_name: String(item.product_name),
-        amount: Math.round(Number(item.unit_price)), // BDT to paisa
+        amount: Math.round(Number(item.unit_price) * 100), // cents
         quantity: Number(item.quantity) || 1,
       }));
 
       const response = await axios.post(
         "http://localhost:8000/api/create-checkout-session",
-        {
-          items: payload,
-          userId: user.id,
-        },
+        { items: payload },
         {
           headers: { Authorization: `Bearer ${JSON.parse(token)}` },
         }
@@ -198,22 +184,20 @@ const PaymentPage = () => {
 
             <div className="space-y-6">
               {cartItems.length === 0 ? (
-                <div className="text-center text-gray-500">Your cart is empty!</div>
+                <div className="text-center text-gray-500">
+                  Your cart is empty!
+                </div>
               ) : (
                 cartItems.map((item) => (
                   <div key={item.id} className="flex justify-between items-center">
                     <div>
                       <p>{item.product_name}</p>
-                      <p>
-                        {Number(item.quantity)} x ৳
-                        {Number(item.unit_price).toFixed(2)}
-                      </p>
+                      <p>{Number(item.quantity)} x ${Number(item.unit_price).toFixed(2)}</p>
                     </div>
                     <div className="flex gap-3 items-center">
                       <button
                         onClick={() => decreaseQty(item.id)}
                         className="bg-red-500 text-white p-2 rounded-full"
-                        aria-label="Decrease quantity"
                       >
                         <FaMinus />
                       </button>
@@ -221,25 +205,19 @@ const PaymentPage = () => {
                       <button
                         onClick={() => increaseQty(item.id)}
                         className="bg-green-500 text-white p-2 rounded-full"
-                        aria-label="Increase quantity"
                       >
                         <FaPlus />
                       </button>
-                      <span>
-                        ৳
-                        {(Number(item.unit_price) * Number(item.quantity)).toFixed(
-                          2
-                        )}
-                      </span>
+                      <span>${(Number(item.unit_price) * Number(item.quantity)).toFixed(2)}</span>
                     </div>
                   </div>
                 ))
               )}
 
               {/* Total */}
-              <div className="flex justify-between font-bold text-gray-900 mt-6">
+              <div className="flex justify-between font-bold text-gray-900">
                 <span>Total</span>
-                <span>৳{total.toFixed(2)}</span>
+                <span>${total.toFixed(2)}</span>
               </div>
 
               {/* Error / Success */}
@@ -281,4 +259,3 @@ const PaymentPage = () => {
 };
 
 export default PaymentPage;
-
