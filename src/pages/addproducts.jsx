@@ -20,7 +20,7 @@ const initialFormData = {
 export default function ProductForm() {
   const { http } = AuthUser();
   const [formData, setFormData] = useState(initialFormData);
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState({ message: "", type: "" });
   const navigate = useNavigate();
 
   // ✅ Unified Input Handler
@@ -35,44 +35,44 @@ export default function ProductForm() {
   // ✅ Toast Function
   const showToast = (message, type = "success") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => setToast({ message: "", type: "" }), 3000);
   };
 
   // ✅ Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let imageUrl = "";
 
     try {
-      let imageUrl = "";
-
       if (formData.image_path) {
         const imageData = new FormData();
         imageData.append("file", formData.image_path);
         imageData.append("upload_preset", "insta_clone");
         imageData.append("cloud_name", "clouding1");
 
-        const res = await fetch(
+        const cloudRes = await fetch(
           "https://api.cloudinary.com/v1_1/clouding1/image/upload",
           { method: "POST", body: imageData }
         );
-
-        if (!res.ok) throw new Error("Image upload failed");
-        const cloudData = await res.json();
+        const cloudData = await cloudRes.json();
+        if (!cloudRes.ok) throw new Error("Failed to upload image");
         imageUrl = cloudData.url;
       }
 
-      const payload = { ...formData, image_path: imageUrl };
-      const response = await http.post("/addproduct", payload);
+      const dataToSend = { ...formData, image_path: imageUrl };
+      const res = await http.post("/addproduct", dataToSend);
 
-      if (response.data.success) {
+      if (res.data.success) {
         showToast("✅ Product created successfully!", "success");
         setFormData(initialFormData);
       } else {
         showToast("❌ Failed to create product.", "error");
       }
     } catch (err) {
-      console.error(err);
-      showToast(err.response?.data?.message || err.message, "error");
+      console.error("Error:", err);
+      const message =
+        err.response?.data?.message || err.message || "An error occurred";
+      showToast(message, "error");
     }
   };
 
@@ -116,14 +116,22 @@ export default function ProductForm() {
         🛒 Add / Update Product
       </h2>
 
-      {/* ✅ Toast */}
-      {toast && <Toast {...toast} />}
+      {/* ✅ Toast Notification */}
+      {toast.message && (
+        <div
+          className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold transform transition-all duration-300
+            ${toast.type === "success" ? "bg-green-600" : "bg-red-600"}`}
+        >
+          {toast.message}
+        </div>
+      )}
 
       {/* ✅ Form */}
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
+        {/* Dynamic Input Fields */}
         {fields.map((field, idx) => (
           <InputField
             key={idx}
@@ -134,29 +142,45 @@ export default function ProductForm() {
         ))}
 
         {/* Description */}
-        <TextArea
-          label="Description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
+        <div className="md:col-span-2">
+          <label className="block text-gray-800 font-semibold mb-2">
+            Description
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter product description"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-24"
+          ></textarea>
+        </div>
 
         {/* Availability */}
-        <Checkbox
-          label="Available"
-          name="is_available"
-          checked={formData.is_available}
-          onChange={handleChange}
-        />
+        <div className="flex items-center gap-3 mt-3">
+          <input
+            type="checkbox"
+            name="is_available"
+            checked={formData.is_available}
+            onChange={handleChange}
+            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label className="text-gray-800 font-medium">Available</label>
+        </div>
 
         {/* Image Upload */}
-        <FileInput
-          label="Product Image"
-          name="image_path"
-          onChange={handleChange}
-        />
+        <div className="md:col-span-2 mt-3">
+          <label className="block text-gray-800 font-semibold mb-2">
+            Product Image
+          </label>
+          <input
+            type="file"
+            name="image_path"
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-        {/* Submit */}
+        {/* Submit Button */}
         <div className="md:col-span-2 flex justify-end mt-6">
           <button
             type="submit"
@@ -170,7 +194,7 @@ export default function ProductForm() {
   );
 }
 
-// 🧩 Reusable Components
+// 🧩 Reusable Input Field
 function InputField({ label, ...props }) {
   return (
     <div className="flex flex-col">
@@ -183,52 +207,3 @@ function InputField({ label, ...props }) {
   );
 }
 
-function TextArea({ label, ...props }) {
-  return (
-    <div className="md:col-span-2">
-      <label className="block text-gray-800 font-semibold mb-2">{label}</label>
-      <textarea
-        {...props}
-        placeholder="Enter product description"
-        className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-24"
-      ></textarea>
-    </div>
-  );
-}
-
-function Checkbox({ label, ...props }) {
-  return (
-    <div className="flex items-center gap-3 mt-3">
-      <input
-        type="checkbox"
-        {...props}
-        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-      />
-      <label className="text-gray-800 font-medium">{label}</label>
-    </div>
-  );
-}
-
-function FileInput({ label, ...props }) {
-  return (
-    <div className="md:col-span-2 mt-3">
-      <label className="block text-gray-800 font-semibold mb-2">{label}</label>
-      <input
-        type="file"
-        {...props}
-        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-  );
-}
-
-function Toast({ message, type }) {
-  return (
-    <div
-      className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-sm font-semibold transform transition-all duration-300
-        ${type === "success" ? "bg-green-600" : "bg-red-600"}`}
-    >
-      {message}
-    </div>
-  );
-}
