@@ -43,47 +43,56 @@ const PaymentPage = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    // 🛒 Checkout
-    const handleCheckout = (image_path, product_name) => {
-        if (items.length === 0) {
-            toast.error("🛒 Your cart is empty!");
-            return;
-        }
+    const token = localStorage.getItem("token");
 
-        axios.post(
-            "http://localhost:8000/api/checkout",
-            {
-                payment_method: "cod",
-                delivery_address: "Dhaka, Bangladesh",
-                image_path: image_path,
-                product_name: product_name,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-                },
-            }
-        )
-            .then((res) => {
-                if (res.data.success) {
-                    toast.success(res.data.message);
-                    setItems([]); // clear UI cart
-                }
-            })
-            .catch((err) => {
-                console.error("Checkout failed:", err);
-                toast.error("Failed to confirm order.");
+    // Fetch user's cart
+    const fetchCart = async () => {
+        if (!user || !user.id || !token) return;
+        setLoading(true);
+        setError("");
+
+        try {
+            const res = await axios.get(`http://localhost:8000/api/user-cart/${user.id}`, {
+                headers: { Authorization: `Bearer ${JSON.parse(token)}` },
             });
+
+            if (res.data.success) {
+                setCartItems(res.data.cart);
+
+                // Calculate total in BDT, assuming unit_price is already in BDT
+                const totalAmount = res.data.cart.reduce(
+                    (sum, item) =>
+                        sum + Number(item.unit_price) * Number(item.quantity),
+                    0
+                );
+                setTotal(totalAmount);
+            } else {
+                setError("Failed to fetch cart items");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Error fetching cart items");
+        } finally {
+            setLoading(false);
+        }
     };
 
-
-    useEffect(() => {
-        if (!localStorage.getItem("token")) {
-            navigate("/login");
-        } else {
+    // Increase quantity
+    const increaseQty = async (cartId) => {
+        try {
+            await axios.put(
+                `http://localhost:8000/api/cart/increment/${cartId}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+                }
+            );
+            toast.success("Quantity increased");
             fetchCart();
+        } catch {
+            toast.error("Failed to increase quantity");
         }
-    });
+    };
 
     // Decrease quantity
     const decreaseQty = async (cartId) => {
@@ -103,7 +112,7 @@ const PaymentPage = () => {
     };
 
     // Handle Stripe checkout
-    const handleCheckout = async () => {
+    const handleCheckout = async (image_path, product_name) => {
         if (!token || !user) {
             navigate("/login");
             return;
@@ -129,11 +138,17 @@ const PaymentPage = () => {
             const response = await axios.post(
                 "http://localhost:8000/api/create-checkout-session",
                 {
-                    items: payload,
+                    items: payload, // existing cart payload
                     userId: user.id,
+                    payment_method: "cod", // same as first API
+                    delivery_address: "Dhaka, Bangladesh",
+                    image_path: null,
+                    product_name: 'All Products',
                 },
                 {
-                    headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(token)}`,
+                    },
                 }
             );
 
@@ -157,89 +172,19 @@ const PaymentPage = () => {
         } else {
             fetchCart();
         }
-    }, [user, token, navigate]);
+    }, []);
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f5f0e6] w-[60%] mx-auto flex items-center justify-center p-4">
-                <div className="w-full max-w-md bg-[#3e2723] rounded-2xl shadow-xl overflow-hidden">
-                    {/* Header */}
-                    <div className="bg-[#4e342e] text-[#f5f0e6] p-4 flex items-center gap-2">
-                        <FaCoffee className="w-6 h-6" />
-                        <h1 className="text-lg font-semibold">Coffee Cart</h1>
-                    </div>
-
-                    {/* Cart List */}
-                    <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto bg-[#f5f0e6]">
-                        {items.length > 0 ? (
-                            items.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="flex justify-between items-center bg-[#d7ccc8] rounded-xl px-4 py-3 shadow-sm"
-                                >
-                                    <div>
-                                        <p className="text-[#3e2723] font-semibold">
-                                            {item.product?.product_name}
-                                        </p>
-                                        <p className="text-sm text-[#5d4037]">
-                                            ${item.unit_price} each
-                                        </p>
-                                    </div>
-
-                                    {/* Quantity Controls */}
-                                    <div className="flex items-center gap-3">
-                                        <button
-                                            onClick={() => decreaseQty(item.id)}
-                                            className="bg-[#6d4c41] text-white px-2 py-1 rounded-full hover:bg-[#5d4037]"
-                                        >
-                                            <FaMinus />
-                                        </button>
-                                        <span className="font-bold text-[#3e2723] w-6 text-center">
-                                            {item.quantity}
-                                        </span>
-                                        <button
-                                            onClick={() => increaseQty(item.id)}
-                                            className="bg-[#6d4c41] text-white px-2 py-1 rounded-full hover:bg-[#5d4037]"
-                                        >
-                                            <FaPlus />
-                                        </button>
-                                        <span className="text-[#4e342e] font-bold">
-                                            ${(item.quantity * item.unit_price).toFixed(2)}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-center text-[#5d4037] font-medium">
-                                🛒 Your cart is empty
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="bg-[#4e342e] text-[#f5f0e6] p-4 flex justify-between items-center">
-                        <span className="font-bold text-lg">
-                            Total: $
-                            {items
-                                .reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
-                                .toFixed(2)}
-                        </span>
-                        <button
-                            onClick={() => handleCheckout()}
-                            className="bg-[#6d4c41] hover:bg-[#5d4037] text-white px-4 py-2 rounded-xl flex items-center gap-2 disabled:opacity-50"
-                            disabled={items.length === 0}
-                        >
-                            <FaShoppingCart className="w-5 h-5" /> Checkout
-                        </button>
-                    </div>
-                </div>
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-lg">Loading cart...</p>
             </div>
         );
     }
 
     return (
         <ErrorBoundary>
-            <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
+            <div className="mx-auto w-[60%] min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
                 <div className="max-w-md mx-auto">
                     {/* Header */}
                     <div className="text-center mb-8 pt-8">
@@ -317,7 +262,7 @@ const PaymentPage = () => {
 
                             {/* Checkout */}
                             <button
-                                onClick={handleCheckout}
+                                onClick={() => handleCheckout()}
                                 disabled={loading || cartItems.length === 0}
                                 className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-amber-600 hover:to-orange-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
                             >
@@ -342,4 +287,3 @@ const PaymentPage = () => {
 };
 
 export default PaymentPage;
-
