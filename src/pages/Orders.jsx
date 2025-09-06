@@ -8,15 +8,36 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    http
-      .get("/orders")
-      .then((res) => setOrders(res.data))
-      .catch((err) => {
-        console.error("Error fetching orders:", err);
-        toast.error("Failed to load orders.");
-      })
-      .finally(() => setLoading(false));
-  }, [http]);
+     alert("Slkdfklsjd")
+  }, []);
+
+  useEffect(() => {
+    console.log("SLKJFKS")
+    // if (JSON.parse(localStorage.getItem('user')).role == 'Customer') {
+    //   http
+    //     .get("/orders")
+    //     .then((res) => setOrders(res.data))
+    //     .catch((err) => {
+    //       console.error("Error fetching orders:", err);
+    //       toast.error("Failed to load orders.");
+    //     })
+    //     .finally(() => setLoading(false));
+    // } else {
+    //   axios
+    //     .get("http://localhost:8000/api/orders/manager", {
+    //       headers: {
+    //         Authorization: `Bearer ${JSON.parse(localStorage.getItem('token'))}`,
+    //       },
+    //     })
+    //     .then((res) => {
+    //       setOrders(res.data);
+    //     })
+    //     .catch((err) => {
+    //       console.error("Error fetching orders:", err);
+    //       toast.error("Failed to load orders.");
+    //     });
+    // }
+  }, []);
 
   if (loading) return <p className="p-6">Loading your orders...</p>;
 

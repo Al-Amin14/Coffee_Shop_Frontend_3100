@@ -75,6 +75,7 @@ const MenuPage = () => {
             quantity: 1,
             total_price: product.price,
             image_path: product.image_path,
+            status: 'pending',
         };
 
         axios
@@ -102,9 +103,11 @@ const MenuPage = () => {
         const payload = {
             user_id: user.id,
             product_id: product.id,
+            product_name: product.product_name,
             quantity: 1,
             unit_price: product.price,
-            total_price: product.price
+            total_price: product.price,
+            image_path: product.image_path,
         };
 
         axios
