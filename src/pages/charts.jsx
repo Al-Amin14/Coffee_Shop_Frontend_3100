@@ -21,9 +21,9 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-4 text-red-600">
-          <h2>Something went wrong.</h2>
-          <p>{this.state.error?.message}</p>
+        <div className="p-6 text-center text-red-600 bg-red-50 rounded-xl">
+          <h2 className="text-xl font-bold">Something went wrong</h2>
+          <p className="mt-2 text-sm">{this.state.error?.message}</p>
         </div>
       );
     }
@@ -31,49 +31,47 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-/* 🌟 Cart Item Component */
+/* 🌟 Reusable UI Components */
 const CartItem = ({ item, onIncrease, onDecrease }) => (
-  <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+  <div className="flex justify-between items-center border-b border-gray-200 pb-4">
     <div>
-      <p className="font-medium text-gray-800">{item.product_name}</p>
+      <p className="font-medium text-gray-900">{item.product_name}</p>
       <p className="text-sm text-gray-500">
         {item.quantity} × ৳{Number(item.unit_price).toFixed(2)}
       </p>
     </div>
-    <div className="flex gap-3 items-center">
+    <div className="flex items-center gap-3">
       <button
         onClick={() => onDecrease(item.id)}
-        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition"
+        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow transition"
         aria-label="Decrease quantity"
       >
         <FaMinus />
       </button>
-      <span className="font-semibold">{item.quantity}</span>
+      <span className="font-semibold text-gray-700">{item.quantity}</span>
       <button
         onClick={() => onIncrease(item.id)}
-        className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition"
+        className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full shadow transition"
         aria-label="Increase quantity"
       >
         <FaPlus />
       </button>
-      <span className="ml-2 font-semibold text-gray-800">
+      <span className="ml-3 font-semibold text-gray-900">
         ৳{(item.unit_price * item.quantity).toFixed(2)}
       </span>
     </div>
   </div>
 );
 
-/* 🌟 Alerts */
-const ErrorAlert = ({ message }) =>
+const Alert = ({ type, message }) =>
   message && (
-    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-      {message}
-    </div>
-  );
-
-const SuccessAlert = ({ message }) =>
-  message && (
-    <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">
+    <div
+      className={`p-3 rounded-lg text-sm border ${
+        type === "error"
+          ? "bg-red-50 border-red-200 text-red-600"
+          : "bg-green-50 border-green-200 text-green-600"
+      }`}
+    >
       {message}
     </div>
   );
@@ -102,15 +100,10 @@ const PaymentPage = () => {
     setLoading(true);
     setError("");
     try {
-      const res = await api.get(`/user-cart/${user.id}`);
-      if (res.data.success) {
-        setCartItems(res.data.cart);
-        setTotal(
-          res.data.cart.reduce(
-            (sum, item) => sum + item.unit_price * item.quantity,
-            0
-          )
-        );
+      const { data } = await api.get(`/user-cart/${user.id}`);
+      if (data.success) {
+        setCartItems(data.cart);
+        setTotal(data.cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0));
       } else {
         setError("Failed to fetch cart items");
       }
@@ -142,14 +135,14 @@ const PaymentPage = () => {
     setError("");
     setSuccess("");
     try {
-      const payload = cartItems.map((item) => ({
-        product_name: String(item.product_name),
-        amount: Math.round(item.unit_price),
-        quantity: item.quantity,
+      const items = cartItems.map(({ product_name, unit_price, quantity }) => ({
+        product_name: String(product_name),
+        amount: Math.round(unit_price),
+        quantity,
       }));
 
-      const res = await api.post("/create-checkout-session", {
-        items: payload,
+      const { data } = await api.post("/create-checkout-session", {
+        items,
         userId: user.id,
         payment_method: "cod",
         delivery_address: "Dhaka, Bangladesh",
@@ -157,9 +150,9 @@ const PaymentPage = () => {
         product_name: "All Products",
       });
 
-      if (res.data.url) {
+      if (data.url) {
         setSuccess("Redirecting to Stripe...");
-        window.location.href = res.data.url;
+        window.location.href = data.url;
       } else {
         setError("Failed to create checkout session");
       }
@@ -179,7 +172,7 @@ const PaymentPage = () => {
   if (loading && cartItems.length === 0) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-lg">Loading cart...</p>
+        <p className="text-lg text-gray-700">Loading cart...</p>
       </div>
     );
   }
@@ -225,8 +218,8 @@ const PaymentPage = () => {
             </div>
 
             {/* Alerts */}
-            <ErrorAlert message={error} />
-            <SuccessAlert message={success} />
+            <Alert type="error" message={error} />
+            <Alert type="success" message={success} />
 
             {/* Checkout */}
             <button
