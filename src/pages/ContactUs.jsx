@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+
 
 const ContactUs = () => {
+    const navigate=useNavigate()
+    useEffect(() => {
+    if(!localStorage.getItem('token')){
+      navigate('/login')
+    }
+  }, []);
     return (
         <div className="min-h-screen bg-[#f5f0e6] flex items-center justify-center p-6 mx-auto">
             <div className="bg-white shadow-lg rounded-2xl w-full max-w-3xl p-8">
