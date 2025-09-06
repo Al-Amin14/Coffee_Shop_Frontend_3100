@@ -41,11 +41,11 @@ const Dashboard = () => {
     };
 
     const navigate = useNavigate()
-    // useEffect(() => {
-    //     if (!localStorage.getItem('token')) {
-    //         navigate('/login')
-    //     }
-    // }, []);
+    useEffect(() => {
+        if (!localStorage.getItem('token')) {
+            navigate('/login')
+        }
+    }, []);
 
     return (
         <div className="p-6">

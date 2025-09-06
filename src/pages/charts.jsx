@@ -63,18 +63,38 @@ const ChatList = () => {
     };
 
     // 🛒 Checkout
-    const handleCheckout = () => {
+    const handleCheckout = (image_path, product_name) => {
         if (items.length === 0) {
             toast.error("🛒 Your cart is empty!");
             return;
         }
-        const total = items.reduce(
-            (sum, item) => sum + item.unit_price * item.quantity,
-            0
-        );
-        toast.success(`✅ Order placed! Total: $${total.toFixed(2)}`);
-        setItems([]); // clear local state after checkout (or call API if needed)
+
+        axios.post(
+            "http://localhost:8000/api/checkout",
+            {
+                payment_method: "cod",
+                delivery_address: "Dhaka, Bangladesh",
+                image_path: image_path,
+                product_name: product_name,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+                },
+            }
+        )
+            .then((res) => {
+                if (res.data.success) {
+                    toast.success(res.data.message);
+                    setItems([]); // clear UI cart
+                }
+            })
+            .catch((err) => {
+                console.error("Checkout failed:", err);
+                toast.error("Failed to confirm order.");
+            });
     };
+
 
     useEffect(() => {
         if (!localStorage.getItem("token")) {
@@ -157,7 +177,7 @@ const ChatList = () => {
                             .toFixed(2)}
                     </span>
                     <button
-                        onClick={handleCheckout}
+                        onClick={()=>handleCheckout()}
                         className="bg-[#6d4c41] hover:bg-[#5d4037] text-white px-4 py-2 rounded-xl flex items-center gap-2 disabled:opacity-50"
                         disabled={items.length === 0}
                     >

@@ -10,6 +10,7 @@ import ContactUs from './pages/ContactUs';
 import ProductForm from './pages/addproducts';
 import ChatList from './pages/charts';
 import Orders from './components/Orders';
+import Home from './pages/home';
 import { Toaster } from 'react-hot-toast';
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
         {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
 
         <Routes>
+          <Route path='/' element={<Home/>} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/menu' element={<MenuPage />} />
           <Route path='/contact' element={<ContactUs />} />
