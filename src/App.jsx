@@ -12,6 +12,7 @@ import ChatList from './pages/charts';
 import Orders from './components/Orders';
 import Home from './pages/home';
 import { Toaster } from 'react-hot-toast';
+import ProductDetails from './pages/ProductDetails';
 
 const App = () => {
   const [loged, setLoged] = useState(null); 
@@ -43,6 +44,8 @@ const App = () => {
           <Route path='/charts' element={<ChatList />} />
           <Route path='/Orders' element={<Orders />} />
           <Route path='/productAdd' element={<ProductForm />} />
+          <Route path='/product/:id' element={<ProductDetails />} />
+
         </Routes>
         <Toaster position="top-center" />
       </LoginContext.Provider>
