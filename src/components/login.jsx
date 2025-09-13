@@ -1,5 +1,6 @@
+
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AuthUser from "./AuthUser";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -22,7 +23,6 @@ function Login() {
       .post("/login", { email, password })
       .then((res) => {
         setToken(res.data.user, res.data.access_token);
-
         setLoged(true);
         toast.success("Login successful!");
         if(JSON.parse(localStorage.getItem('user')).role == 'Manager'){
@@ -55,6 +55,7 @@ function Login() {
 
         <form onSubmit={submitForm} className="space-y-4">
 
+       
           <div className="flex flex-col">
             <label className="text-[#a08c8c] font-bold mb-1">Email Address</label>
             <input
@@ -67,7 +68,7 @@ function Login() {
             />
           </div>
 
-
+         
           <div className="flex flex-col relative">
             <label className="text-[#a08c8c] font-bold mb-1">Password</label>
             <input
@@ -86,22 +87,21 @@ function Login() {
             </div>
           </div>
 
-
+          
           <div className="flex justify-between items-center text-sm text-[#a08c8c]">
             <label className="flex items-center gap-2">
               <input type="checkbox" />
               Remember me
             </label>
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
+            <Link
+              to="/forgot-password"
               className="text-[#d28f5d] font-bold hover:underline"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
 
-
+         
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-tr from-[#e59c69] to-[#d28f5d] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1"
@@ -110,15 +110,16 @@ function Login() {
           </button>
         </form>
 
-
-        <div className="mt-6 text-center">
-          <p className="text-[#6b4f4f] mb-2">Don't have an account?</p>
-          <button
-            onClick={() => navigate("/register")}
-            className="w-full py-3 bg-[#d28f5d] text-white font-bold rounded-xl shadow-md hover:bg-[#e59c69] transition-colors"
-          >
-            Sign Up
-          </button>
+        <div className="mt-6 text-center text-sm">
+          <p className="text-[#6b4f4f]">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-[#d28f5d] font-bold hover:underline"
+            >
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
     </div>
