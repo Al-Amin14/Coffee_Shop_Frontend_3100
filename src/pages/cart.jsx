@@ -176,8 +176,8 @@ const PaymentPage = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <p className="text-lg">Loading cart...</p>
+            <div className="flex mx-auto items-center justify-center h-screen">
+                <p className="text-lg text-6xl font-bold p-6 text-gray-600">Loading cart . . .</p>
             </div>
         );
     }

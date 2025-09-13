@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaDollarSign} from "react-icons/fa";
 
-const TotalSales = () => {
+const TotalSales = ({stats}) => {
     return (
 
         <div className="bg-white rounded-2xl shadow-md p-6 flex items-center gap-4 hover:shadow-lg transition">
@@ -10,7 +10,7 @@ const TotalSales = () => {
             </div>
             <div>
                 <p className="text-gray-600">Total Sales</p>
-                <h2 className="text-xl font-bold">$12,340</h2>
+                <h2 className="text-xl font-bold">BDT: {stats ? stats.total_sales : 0}</h2>
             </div>
         </div>
 

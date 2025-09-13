@@ -25,7 +25,11 @@ function Login() {
 
         setLoged(true);
         toast.success("Login successful!");
-        navigate("/dashboard"); // navigate after login
+        if(JSON.parse(localStorage.getItem('user')).role == 'Manager'){
+          navigate("/dashboard"); // navigate after login
+        }else{
+          navigate("/menu"); // navigate after login
+        }
       })
       .catch((err) => {
         console.error("Login failed:", err);

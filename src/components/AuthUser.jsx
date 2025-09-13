@@ -26,7 +26,12 @@ export default function AuthUser() {
     localStorage.setItem("user", JSON.stringify(user));
     setToken(token);
     setUser(user);
-    navigate("/dashboard");
+    if (JSON.parse(localStorage.getItem('user')).role == 'Manager') {
+      navigate("/dashboard"); // navigate after login
+    } else {
+      navigate("/menu"); // navigate after login
+    }
+    // navigate("/dashboard");
   };
 
   // Logout function with redirect to homepage
