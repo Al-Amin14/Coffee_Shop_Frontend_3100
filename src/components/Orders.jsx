@@ -124,7 +124,7 @@ const Orders = () => {
 
   if (loading)
     return (
-      <p className="p-6 text-gray-600 text-center animate-pulse">
+      <p className="p-6 text-gray-600 text-center animate-pulse font-bold text-3xl mx-auto w-full h-full ">
         Loading your orders...
       </p>
     );

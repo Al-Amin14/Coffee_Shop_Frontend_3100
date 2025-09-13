@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaShoppingCart } from "react-icons/fa";
 import AuthUser from "../components/AuthUser";
 
-const OrdersToday = () => {
+const OrdersToday = ({stats}) => {
   const { http } = AuthUser();
   const [orderCount, setOrderCount] = useState(0);
 
@@ -24,7 +24,7 @@ const OrdersToday = () => {
       </div>
       <div>
         <p className="text-gray-600">Orders Today</p>
-        <h2 className="text-xl font-bold">{orderCount}</h2>
+        <h2 className="text-xl font-bold">{stats?stats.orders_today:0}</h2>
       </div>
     </div>
   );

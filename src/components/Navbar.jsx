@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   FaHome, FaList, FaShoppingCart, FaChartBar, FaPhone, FaSignOutAlt, FaPlus
 } from "react-icons/fa";
+import { RiListOrdered2 } from "react-icons/ri";
+import { CgProfile } from "react-icons/cg";
 import { IoLogIn } from "react-icons/io5";
 import { LoginContext } from "../context/login";
 import AuthUser from "../components/AuthUser";
@@ -18,10 +20,11 @@ const Sidebar = () => {
     { name: "Menu", icon: <FaList />, path: "/menu" },
     { name: "Add Product", icon: <FaPlus />, path: "/productAdd" },
     { name: "Orders", icon: <FaShoppingCart />, path: "/orders" },
-    { name: "Chart List", icon: <FaChartBar />, path: "/charts" },
+    { name: "Cart List", icon: <RiListOrdered2 />, path: "/carts" },
     { name: "Contact Us", icon: <FaPhone />, path: "/contact" },
+    { name: "Profile", icon: <CgProfile />, path: "/profile" },
   ];
-  
+
   const handleLogout = () => {
     if (window.confirm("Do you want to log out?")) {
       logout();          // <-- Use AuthUser's logout for clearing session + redirect

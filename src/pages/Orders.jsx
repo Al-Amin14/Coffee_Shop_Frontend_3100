@@ -39,7 +39,7 @@ const Orders = () => {
     // }
   }, []);
 
-  if (loading) return <p className="p-6">Loading your orders...</p>;
+  if (loading) return <p className="p-6 font-bold text-3xl mx-auto w-full h-full">Loading your orders...</p>;
 
   if (orders.length === 0) return <p className="p-6">You have no orders yet.</p>;
 
