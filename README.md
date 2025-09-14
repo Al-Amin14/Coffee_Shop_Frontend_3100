@@ -1,13 +1,17 @@
-# React + Vite
+## Coffee Shop Management System Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Figma Ui Link of the Project : 
+https://www.figma.com/design/SvXCRA28QLWCbgFWzwbXhZ/A1_group07_Coffee_Shop?node-id=1-2&p=f&t=VnEvd82xPS75rRiB-0
 
-Currently, two official plugins are available:
+## Project Objective
+The objective of this project is to develop an efficient and user-friendly Coffee Shop Management System that streamlines operations such as order management, inventory control, sales tracking, and customer service. The system aims to enhance both customer experience and business efficiency by integrating modern technologies and automation.
+## Collaborators
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1-> Md. Shahadat Hossain </br>
+[![wakatime](https://wakatime.com/badge/user/3e03447a-8791-4526-b6ff-5bcb2cdcbb30/project/eb5a27b1-35c5-4cf9-bf3f-2a936bd9628e.svg)](https://wakatime.com/badge/user/3e03447a-8791-4526-b6ff-5bcb2cdcbb30/project/eb5a27b1-35c5-4cf9-bf3f-2a936bd9628e)</br>
 
-## Expanding the ESLint configuration
+2-> AL AMIN JIHAD  </br>
+[![wakatime](https://wakatime.com/badge/user/3da02b1c-7095-45c3-94fd-04673f582943/project/8b02b7d0-6130-4336-8031-e5e6d1e77aa0.svg)](https://wakatime.com/badge/user/3da02b1c-7095-45c3-94fd-04673f582943/project/8b02b7d0-6130-4336-8031-e5e6d1e77aa0)
 
 3-> Abdullah Al Muhit </br>
 [![wakatime](https://wakatime.com/badge/user/aaefaa84-9d83-42ba-9869-9891679ad01d/project/9c5a365d-48c0-419f-8bb4-8ceeab8c59bb.svg)](https://wakatime.com/badge/user/aaefaa84-9d83-42ba-9869-9891679ad01d/project/9c5a365d-48c0-419f-8bb4-8ceeab8c59bb)
