@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';  
 import { LoginContext } from './context/login';
@@ -9,6 +10,7 @@ import Dashboard from './pages/DashBord';
 import ContactUs from './pages/ContactUs';
 import ProductForm from './pages/addproducts';
 import ChatList from './pages/charts';
+import Profile from './pages/Profile';
 import Orders from './components/Orders';
 import Home from './pages/home';
 import { Toaster } from 'react-hot-toast';
@@ -43,6 +45,7 @@ const App = () => {
           <Route path='/charts' element={<ChatList />} />
           <Route path='/Orders' element={<Orders />} />
           <Route path='/productAdd' element={<ProductForm />} />
+          <Route path='/profile' element={<Profile/>}/>
         </Routes>
         <Toaster position="top-center" />
       </LoginContext.Provider>

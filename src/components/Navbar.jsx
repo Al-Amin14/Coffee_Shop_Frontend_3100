@@ -4,6 +4,7 @@ import {
   FaHome, FaList, FaShoppingCart, FaChartBar, FaPhone, FaSignOutAlt, FaPlus
 } from "react-icons/fa";
 import { IoLogIn } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 import { LoginContext } from "../context/login";
 import AuthUser from "../components/AuthUser";
 
@@ -20,6 +21,7 @@ const Sidebar = () => {
     { name: "Orders", icon: <FaShoppingCart />, path: "/orders" },
     { name: "Chart List", icon: <FaChartBar />, path: "/charts" },
     { name: "Contact Us", icon: <FaPhone />, path: "/contact" },
+    { name: "Profile", icon: <CgProfile />, path: "/profile" },
   ];
   
   const handleLogout = () => {
