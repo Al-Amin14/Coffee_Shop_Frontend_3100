@@ -123,6 +123,7 @@ const PaymentPage = () => {
       fetchCart();
     } catch {
       toast.error(`Failed to ${type} quantity`);
+
     }
   };
 
