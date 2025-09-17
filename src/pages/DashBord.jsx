@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TotalSales from "../components/TotalSales";
 import OrdersToday from "../components/OrdersToday";
 import PopularItems from "../components/PopularItems";
 import Customer from "../components/Customer";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Dashboard = () => {
