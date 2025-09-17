@@ -75,7 +75,7 @@ const Sidebar = () => {
           className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-[#7b4d35] hover:text-white m-4 mt-0 transition"
         >
           <span className="text-lg"><FaSignOutAlt /></span>
-          <span>Logout</span>
+          <span>Log Out</span>
         </button>
       ) : (
         <button
@@ -83,7 +83,7 @@ const Sidebar = () => {
           className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-[#7b4d35] hover:text-white m-4 mt-0 transition"
         >
           <span className="text-lg"><IoLogIn /></span>
-          <span>Login</span>
+          <span>Log Out</span>
         </button>
       )}
       <div className="p-4 border-t border-[#6f4e37] text-sm text-[#d1c4b2] text-center">

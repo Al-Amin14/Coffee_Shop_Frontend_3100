@@ -14,6 +14,7 @@ import Home from './pages/home';
 import { Toaster } from 'react-hot-toast';
 import Profile from './pages/Profile';
 import ProductDetails from './pages/ProductDetails';
+import SuccessPage from './pages/success';
 
 const App = () => {
   const [loged, setLoged] = useState(null);
@@ -47,6 +48,7 @@ const App = () => {
           <Route path='/productAdd' element={<ProductForm />} />
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/product/:id' element={<ProductDetails />} />
+          <Route path='/success' element={<SuccessPage />} />
 
         </Routes>
         <Toaster position="top-center" />

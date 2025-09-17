@@ -44,7 +44,7 @@ const ProductDetails = () => {
     }
   };
 
-  
+
   const handleSubmitComment = async () => {
     if (!comment.trim()) return toast.error('Please write a comment.');
 
@@ -172,7 +172,10 @@ const ProductDetails = () => {
       <p className="text-gray-700 mb-4">{product.description}</p>
       <p className="text-xl font-semibold text-yellow-700 mb-6">৳{product.price}</p>
 
-    
+{/* --------------------------------------------- */}
+
+    { JSON.parse(localStorage.getItem('user')).role!="Manager"? (<div>
+
       <div className="flex items-center mb-6">
         <p className="mr-4 font-semibold">Quantity of product:</p>
         <button
@@ -239,7 +242,9 @@ const ProductDetails = () => {
             Post Comment
           </button>
         </div>
-
+        </div> 
+        </div>) : ''}
+{/* --------------------------------------- */}
       
         {commentLoading ? (
           <p>Loading comments...</p>
@@ -283,7 +288,8 @@ const ProductDetails = () => {
           </div>
         )}
       </div>
-    </div>
+    // </div>
+    // </div>
   );
 };
 

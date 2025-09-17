@@ -44,7 +44,7 @@ const PaymentPage = () => {
 
   const token = localStorage.getItem("token");
 
-  
+  // fetch cart only once from backend
   const fetchCart = async () => {
     if (!user || !user.id || !token) return;
     setLoading(true);
@@ -73,53 +73,30 @@ const PaymentPage = () => {
     }
   };
 
-  const increaseQty = async (cartId) => {
-    try {
-      await axios.put(
-        `http://localhost:8000/api/cart/increment/${cartId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${JSON.parse(token)}` },
-        }
-      );
-      toast.success("Quantity increased");
+  // --- increment/decrement only updates local state ---
+  const increaseQty = (cartId) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === cartId ? { ...item, quantity: Number(item.quantity) + 1 } : item
+      )
+    );
+    toast.success("Quantity increased");
+  };
 
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.id === cartId ? { ...item, quantity: Number(item.quantity) + 1 } : item
+  const decreaseQty = (cartId) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          item.id === cartId
+            ? { ...item, quantity: Math.max(Number(item.quantity) - 1, 0) }
+            : item
         )
-      );
-    } catch {
-      toast.error("Failed to increase quantity");
-    }
+        .filter((item) => item.quantity > 0)
+    );
+    toast.success("Quantity decreased");
   };
 
-  const decreaseQty = async (cartId) => {
-    try {
-      await axios.put(
-        `http://localhost:8000/api/cart/decrement/${cartId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${JSON.parse(token)}` },
-        }
-      );
-      toast.success("Quantity decreased");
-
-      setCartItems((prev) =>
-        prev
-          .map((item) =>
-            item.id === cartId
-              ? { ...item, quantity: Math.max(Number(item.quantity) - 1, 0) }
-              : item
-          )
-          .filter((item) => item.quantity > 0) 
-      );
-    } catch {
-      toast.error("Failed to decrease quantity");
-    }
-  };
-
-  
+  // checkout with updated local cart
   const handleCheckout = async () => {
     if (!token || !user) {
       navigate("/login");
@@ -136,11 +113,14 @@ const PaymentPage = () => {
     setSuccess("");
 
     try {
+      // use the updated local cartItems
       const payload = cartItems.map((item) => ({
-        product_name: String(item.product_name),
-        amount: Math.round(Number(item.unit_price)), 
+        product_id: item.product_id, // keep product id if backend needs it
+        product_name: "Coffee",
+        amount: Math.round(Number(item.unit_price)),
         quantity: Number(item.quantity) || 1,
       }));
+      // console.log(payload)
 
       const response = await axios.post(
         "http://localhost:8000/api/create-checkout-session",
@@ -173,7 +153,7 @@ const PaymentPage = () => {
     }
   };
 
-  
+  // update total whenever cart changes
   useEffect(() => {
     const totalAmount = cartItems.reduce(
       (sum, item) => sum + Number(item.unit_price) * Number(item.quantity),
@@ -188,7 +168,6 @@ const PaymentPage = () => {
     } else {
       fetchCart();
     }
-  
   }, []);
 
   if (loading) {
@@ -203,7 +182,6 @@ const PaymentPage = () => {
     <ErrorBoundary>
       <div className="mx-auto w-[60%] min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
         <div className="max-w-md mx-auto">
-       
           <div className="text-center mb-8 pt-8">
             <div className="flex justify-center mb-4">
               <FaCoffee className="h-16 w-16 text-amber-600" />
@@ -212,7 +190,6 @@ const PaymentPage = () => {
             <p className="text-gray-600">Your Cart</p>
           </div>
 
-          
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
               <FaShoppingCart className="h-5 w-5 mr-2" />
@@ -256,13 +233,11 @@ const PaymentPage = () => {
                 ))
               )}
 
-             
               <div className="flex justify-between font-bold text-gray-900 mt-6">
                 <span>Total</span>
                 <span>৳{total.toFixed(2)}</span>
               </div>
 
-            
               {error && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-red-600 text-sm">{error}</p>
@@ -274,7 +249,6 @@ const PaymentPage = () => {
                 </div>
               )}
 
-              
               <button
                 onClick={handleCheckout}
                 disabled={loading || cartItems.length === 0}
@@ -301,5 +275,3 @@ const PaymentPage = () => {
 };
 
 export default PaymentPage;
-
-
