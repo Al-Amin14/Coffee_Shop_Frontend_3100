@@ -8,5 +8,4 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: "/coffee-shop-frontend-3100/",
 })
