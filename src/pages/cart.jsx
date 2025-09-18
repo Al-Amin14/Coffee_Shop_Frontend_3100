@@ -51,7 +51,7 @@ const PaymentPage = () => {
     setError("");
 
     try {
-      const res = await axios.get(`http://localhost:8000/api/user-cart/${user.id}`, {
+      const res = await axios.get(`https://coffeeshopbackend3100-production.up.railway.app/api/user-cart/${user.id}`, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
 
@@ -123,7 +123,7 @@ const PaymentPage = () => {
       // console.log(payload)
 
       const response = await axios.post(
-        "http://localhost:8000/api/create-checkout-session",
+        "https://coffeeshopbackend3100-production.up.railway.app/api/create-checkout-session",
         {
           items: payload,
           userId: user.id,

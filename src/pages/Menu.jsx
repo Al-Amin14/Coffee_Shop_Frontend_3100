@@ -17,7 +17,7 @@ const MenuPage = () => {
         }
 
         axios
-            .get("http://localhost:8000/api/allproducts", {
+            .get("https://coffeeshopbackend3100-production.up.railway.app/api/allproducts", {
                 headers: {
                     Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
                 },

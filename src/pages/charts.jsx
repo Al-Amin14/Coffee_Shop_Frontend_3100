@@ -90,7 +90,7 @@ const PaymentPage = () => {
 
   /* 🔹 Axios instance */
   const api = axios.create({
-    baseURL: "http://localhost:8000/api",
+    baseURL: "https://coffeeshopbackend3100-production.up.railway.app/api",
     headers: { Authorization: `Bearer ${JSON.parse(token)}` },
   });
 

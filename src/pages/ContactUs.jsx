@@ -30,7 +30,7 @@ const ContactUs = () => {
 
         try {
             const response = await axios.post(
-                "http://localhost:8000/api/contact-us",
+                "https://coffeeshopbackend3100-production.up.railway.app/api/contact-us",
                 {
                     name,
                     email,

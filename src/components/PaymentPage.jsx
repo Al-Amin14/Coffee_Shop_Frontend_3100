@@ -52,7 +52,7 @@ const PaymentPage = () => {
     setError("");
 
     try {
-      const res = await axios.get(`http://localhost:8000/api/user-cart/${user.id}`, {
+      const res = await axios.get(`https://coffeeshopbackend3100-production.up.railway.app/api/user-cart/${user.id}`, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
 
@@ -77,7 +77,7 @@ const PaymentPage = () => {
   // Increase quantity
   const increaseQty = async (cartId) => {
     try {
-      await axios.put(`http://localhost:8000/api/cart/increment/${cartId}`, {}, {
+      await axios.put(`https://coffeeshopbackend3100-production.up.railway.app/api/cart/increment/${cartId}`, {}, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
       toast.success("Quantity increased");
@@ -90,7 +90,7 @@ const PaymentPage = () => {
   // Decrease quantity
   const decreaseQty = async (cartId) => {
     try {
-      await axios.put(`http://localhost:8000/api/cart/decrement/${cartId}`, {}, {
+      await axios.put(`https://coffeeshopbackend3100-production.up.railway.app/api/cart/decrement/${cartId}`, {}, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
       toast.success("Quantity decreased");
@@ -125,7 +125,7 @@ const PaymentPage = () => {
       }));
 
       const response = await axios.post(
-        "http://localhost:8000/api/create-checkout-session",
+        "https://coffeeshopbackend3100-production.up.railway.app/api/create-checkout-session",
         { items: payload },
         {
           headers: { Authorization: `Bearer ${JSON.parse(token)}` },

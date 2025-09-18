@@ -31,7 +31,7 @@ const Orders = () => {
         .finally(() => setLoading(false));
     } else {
       axios
-        .get("http://localhost:8000/api/orders/manager", {
+        .get("https://coffeeshopbackend3100-production.up.railway.app/api/orders/manager", {
           headers: {
             Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           },
@@ -73,7 +73,7 @@ const Orders = () => {
 
     axios
       .post(
-        `http://localhost:8000/api/orders/confirm/${orderId}`,
+        `https://coffeeshopbackend3100-production.up.railway.app/api/orders/confirm/${orderId}`,
         {
           payment_method: "bkash",
           delivery_address: "Mohanogor Project : Road 1",
@@ -102,7 +102,7 @@ const Orders = () => {
 
     axios
       .put(
-        `http://localhost:8000/api/orders/${orderId}/confirmed-by`,
+        `https://coffeeshopbackend3100-production.up.railway.app/api/orders/${orderId}/confirmed-by`,
         { confirmed_by: confirmedBy },
         {
           headers: {

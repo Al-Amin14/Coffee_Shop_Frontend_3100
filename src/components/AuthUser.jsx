@@ -44,7 +44,7 @@ export default function AuthUser() {
 
   // Create axios instance with token header if available
   const http = axios.create({
-    baseURL: "http://localhost:8000/api",
+    baseURL: "https://coffeeshopbackend3100-production.up.railway.app/api",
     headers: {
       "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),

@@ -13,7 +13,7 @@ const VerifyEmail = () => {
     if (!id || !token) return setMessage('Invalid verification link.');
 
     axios
-      .get(`http://localhost:8000/api/email/verify/${id}/${token}`)
+      .get(`https://coffeeshopbackend3100-production.up.railway.app/api/email/verify/${id}/${token}`)
       .then(() => setMessage('Email verified successfully!'))
       .catch((err) => setMessage(err.response?.data?.message || 'Verification failed.'));
   }, [searchParams]);

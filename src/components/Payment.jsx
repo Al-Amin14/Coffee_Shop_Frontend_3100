@@ -8,7 +8,7 @@ const PaymentPage = () => {
   const handleCheckout = (e) => {
     e.preventDefault();
     // ✅ Redirect to your Laravel Blade view (example2)
-    window.location.href = 'http://localhost:8000/example2';
+    window.location.href = 'https://coffeeshopbackend3100-production.up.railway.app/example2';
   };
 
   return (

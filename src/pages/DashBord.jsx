@@ -24,7 +24,7 @@ const Dashboard = () => {
 
     const fetchStats = () => {
         axios
-            .get("http://localhost:8000/api/dashboard/stats", {
+            .get("https://coffeeshopbackend3100-production.up.railway.app/api/dashboard/stats", {
                 headers: {
                     Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
                 },
@@ -39,7 +39,7 @@ const Dashboard = () => {
     const fetchRecentOrders = () => {
         setLoadingOrders(true);
         axios
-            .get("http://localhost:8000/api/dashboard/recent-orders", {
+            .get("https://coffeeshopbackend3100-production.up.railway.app/api/dashboard/recent-orders", {
                 headers: {
                     Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
                 },

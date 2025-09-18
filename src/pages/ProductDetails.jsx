@@ -30,7 +30,7 @@ const ProductDetails = () => {
   const fetchComments = async (productId) => {
     setCommentLoading(true);
     try {
-      const res = await axios.get(`http://localhost:8000/api/comments/${productId}`, {
+      const res = await axios.get(`https://coffeeshopbackend3100-production.up.railway.app/api/comments/${productId}`, {
         headers: {
           Authorization: `Bearer ${JSON.parse(token)}`,
         },
@@ -55,7 +55,7 @@ const ProductDetails = () => {
         comment: comment.trim(),
       };
 
-      await axios.post('http://localhost:8000/api/comments', payload, {
+      await axios.post('https://coffeeshopbackend3100-production.up.railway.app/api/comments', payload, {
         headers: {
           Authorization: `Bearer ${JSON.parse(token)}`,
         },
@@ -91,7 +91,7 @@ const ProductDetails = () => {
         image_path: product.image_path,
       };
 
-      await axios.post('http://localhost:8000/api/addchart', payload, {
+      await axios.post('https://coffeeshopbackend3100-production.up.railway.app/api/addchart', payload, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
 
@@ -120,7 +120,7 @@ const ProductDetails = () => {
         status: 'pending',
       };
 
-      await axios.post('http://localhost:8000/api/orders', payload, {
+      await axios.post('https://coffeeshopbackend3100-production.up.railway.app/api/orders', payload, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
 
@@ -140,7 +140,7 @@ const ProductDetails = () => {
     try {
       console.log('Deleting comment with ID:', commentId);
 
-      await axios.delete(`http://localhost:8000/api/comments/${commentId}`, {
+      await axios.delete(`https://coffeeshopbackend3100-production.up.railway.app/api/comments/${commentId}`, {
         headers: {
           Authorization: `Bearer ${JSON.parse(token)}`,
         },
