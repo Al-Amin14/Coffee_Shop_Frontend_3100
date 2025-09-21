@@ -51,13 +51,13 @@ const PaymentPage = () => {
     setError("");
 
     try {
-      const res = await axios.get(`http://localhost:8000/api/user-cart/${user.id}`, {
+      const res = await axios.get(`http://127.0.0.1:8000/api/user-cart/${user.id}`, {
         headers: { Authorization: `Bearer ${JSON.parse(token)}` },
       });
 
       if (res.data.success) {
         setCartItems(res.data.cart);
-        const totalAmount = res.data.cart.reduce(
+        const totalAmount = res.data.cart.reduce( 
           (sum, item) => sum + Number(item.unit_price) * Number(item.quantity),
           0
         );
@@ -123,7 +123,7 @@ const PaymentPage = () => {
       // console.log(payload)
 
       const response = await axios.post(
-        "http://localhost:8000/api/create-checkout-session",
+        "http://127.0.0.1:8000/api/create-checkout-session",
         {
           items: payload,
           userId: user.id,
