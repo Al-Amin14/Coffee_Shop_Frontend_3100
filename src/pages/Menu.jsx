@@ -9,6 +9,8 @@ const MenuPage = () => {
     const [messages, setMessages] = useState([]);
     const [loadingMessage, setLoadingMessage] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(""); // ✅ search state
+    const [sortOrder, setSortOrder] = useState(""); // ✅ sort state
     const navigate = useNavigate();
     const { user } = AuthUser();
 
@@ -66,6 +68,18 @@ const MenuPage = () => {
         navigate(`/product/${product.id}`, { state: { product } });
     };
 
+    // ✅ filter products by search
+    let filteredProducts = products.filter((item) =>
+        item.product_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // ✅ sort products by price
+    if (sortOrder === "asc") {
+        filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+    } else if (sortOrder === "desc") {
+        filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+    }
+
     const askBot = async (question) => {
         setMessages((prev) => [...prev, { role: "user", text: question }]);
         setLoadingMessage(true);
@@ -100,30 +114,57 @@ const MenuPage = () => {
     return (
         <div className="p-6 w-[70%] mx-auto relative">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Our Coffee Menu</h1>
+
+            {/* ✅ Search + Sort */}
+            <div className="mb-6 flex flex-col md:flex-row gap-4">
+                <input
+                    type="text"
+                    placeholder="Search coffee..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1 px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                />
+
+                <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    className="px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                >
+                    <option value="">Sort by Price</option>
+                    <option value="asc">Low → High</option>
+                    <option value="desc">High → Low</option>
+                </select>
+            </div>
+
+            {/* ✅ Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((item) => (
-                    <div
-                        key={item.id}
-                        onClick={() => handleProductClick(item)}
-                        className="bg-white cursor-pointer rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden"
-                    >
-                        <img
-                            src={item.image_path}
-                            alt={item.product_name}
-                            className="w-full h-40 object-cover"
-                        />
-                        <div className="p-4">
-                            <h2 className="text-xl font-semibold text-gray-800">{item.product_name}</h2>
-                            <p className="text-gray-600 text-sm mb-2 truncate">{item.description}</p>
-                            <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold text-yellow-700">
-                                    ${item.price}
-                                </span>
-                                <span className="text-sm text-gray-400">Tap for more</span>
+                {filteredProducts.length > 0 ? (
+                    filteredProducts.map((item) => (
+                        <div
+                            key={item.id}
+                            onClick={() => handleProductClick(item)}
+                            className="bg-white cursor-pointer rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden"
+                        >
+                            <img
+                                src={item.image_path}
+                                alt={item.product_name}
+                                className="w-full h-40 object-cover"
+                            />
+                            <div className="p-4">
+                                <h2 className="text-xl font-semibold text-gray-800">{item.product_name}</h2>
+                                <p className="text-gray-600 text-sm mb-2 truncate">{item.description}</p>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-lg font-bold text-yellow-700">
+                                        ${item.price}
+                                    </span>
+                                    <span className="text-sm text-gray-400">Tap for more</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <p className="text-gray-500 text-center col-span-3">No products found.</p>
+                )}
             </div>
 
             {/* Chatbot Button */}
