@@ -57,7 +57,7 @@ const PaymentPage = () => {
 
       if (res.data.success) {
         setCartItems(res.data.cart);
-        const totalAmount = res.data.cart.reduce(
+        const totalAmount = res.data.cart.reduce( 
           (sum, item) => sum + Number(item.unit_price) * Number(item.quantity),
           0
         );
