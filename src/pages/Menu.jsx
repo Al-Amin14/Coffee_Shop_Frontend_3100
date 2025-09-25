@@ -87,6 +87,7 @@ const MenuPage = () => {
         try {
             const response = await fetch("https://coffeeshopbackend3100-production.up.railway.app/api/genai", {
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
