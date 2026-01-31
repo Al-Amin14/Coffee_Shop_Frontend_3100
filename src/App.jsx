@@ -13,7 +13,7 @@ import Orders from './components/Orders';
 import Home from './pages/home';
 import { Toaster } from 'react-hot-toast';
 import ProductDetails from './pages/ProductDetails';
-
+import SuccessPage from "./pages/SuccessPage";
 const App = () => {
   const [loged, setLoged] = useState(null); 
   const location = useLocation(); 
@@ -45,7 +45,7 @@ const App = () => {
           <Route path='/Orders' element={<Orders />} />
           <Route path='/productAdd' element={<ProductForm />} />
           <Route path='/product/:id' element={<ProductDetails />} />
-
+          <Route path="/success" element={<SuccessPage />} />
         </Routes>
         <Toaster position="top-center" />
       </LoginContext.Provider>
