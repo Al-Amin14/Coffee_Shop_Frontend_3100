@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function ProductForm() {
     const { http } = AuthUser();
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         product_name: "",
         description: "",
@@ -19,18 +21,24 @@ export default function ProductForm() {
     });
 
     const [toast, setToast] = useState({ message: "", type: "" });
-    const navigate=useNavigate();
+    const [loading, setLoading] = useState(false); // ✅ Loading state
 
-    // handle input changes
+    // Handle input changes
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
+
         setFormData({
             ...formData,
-            [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+            [name]:
+                type === "checkbox"
+                    ? checked
+                    : type === "file"
+                        ? files[0]
+                        : value,
         });
     };
 
-    // show toast
+    // Show toast
     const showToast = (message, type = "success") => {
         setToast({ message, type });
         setTimeout(() => setToast({ message: "", type: "" }), 3000);
@@ -41,6 +49,8 @@ export default function ProductForm() {
         let imageUrl = "";
 
         try {
+            setLoading(true); // ✅ Start loading
+
             // Upload image to Cloudinary if present
             if (formData.image_path) {
                 const imageData = new FormData();
@@ -55,12 +65,17 @@ export default function ProductForm() {
                         body: imageData,
                     }
                 );
+
                 const cloudData = await cloudRes.json();
-                if (!cloudRes.ok) throw new Error("Failed to upload image");
+
+                if (!cloudRes.ok) {
+                    throw new Error("Failed to upload image");
+                }
+
                 imageUrl = cloudData.url;
             }
 
-            // Prepare final form data
+            // Prepare data
             const dataToSend = { ...formData, image_path: imageUrl };
 
             // Send to Laravel API
@@ -68,6 +83,8 @@ export default function ProductForm() {
 
             if (res.data.success) {
                 showToast("Product created successfully!", "success");
+
+                // Reset form
                 setFormData({
                     product_name: "",
                     description: "",
@@ -86,16 +103,21 @@ export default function ProductForm() {
             }
         } catch (err) {
             console.error("Error:", err);
-            const message = err.response?.data?.message || err.message || "An error occurred";
+            const message =
+                err.response?.data?.message ||
+                err.message ||
+                "An error occurred";
             showToast(message, "error");
+        } finally {
+            setLoading(false); // ✅ Stop loading
         }
     };
 
     useEffect(() => {
-        if(!localStorage.getItem('token')){
-            navigate('/login')
+        if (!localStorage.getItem("token")) {
+            navigate("/login");
         }
-    }, []);
+    }, [navigate]);
 
     return (
         <div className="max-w-2xl mx-auto bg-white shadow-xl rounded-2xl p-6 mt-10 relative">
@@ -107,7 +129,10 @@ export default function ProductForm() {
             {toast.message && (
                 <div
                     className={`fixed top-5 right-5 px-4 py-2 rounded shadow-lg text-white font-semibold transition-opacity
-                        ${toast.type === "success" ? "bg-green-500" : "bg-red-500"}`}
+                    ${toast.type === "success"
+                            ? "bg-green-500"
+                            : "bg-red-500"
+                        }`}
                 >
                     {toast.message}
                 </div>
@@ -130,6 +155,7 @@ export default function ProductForm() {
                         placeholder="Enter product name"
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
                         required
+                        disabled={loading}
                     />
                 </div>
 
@@ -145,7 +171,7 @@ export default function ProductForm() {
                         onChange={handleChange}
                         placeholder="Enter category"
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        // required
+                        disabled={loading}
                     />
                 </div>
 
@@ -160,6 +186,7 @@ export default function ProductForm() {
                         onChange={handleChange}
                         placeholder="Enter product description"
                         className="w-full border rounded-lg p-2 h-20 focus:ring-2 focus:ring-blue-500"
+                        disabled={loading}
                     ></textarea>
                 </div>
 
@@ -177,6 +204,7 @@ export default function ProductForm() {
                         placeholder="0.00"
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
                         required
+                        disabled={loading}
                     />
                 </div>
 
@@ -193,6 +221,7 @@ export default function ProductForm() {
                         onChange={handleChange}
                         placeholder="0.00"
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                        disabled={loading}
                     />
                 </div>
 
@@ -209,12 +238,15 @@ export default function ProductForm() {
                         placeholder="0"
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
                         required
+                        disabled={loading}
                     />
                 </div>
 
                 {/* Unit */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-2">Unit</label>
+                    <label className="block text-gray-700 font-medium mb-2">
+                        Unit
+                    </label>
                     <input
                         type="text"
                         name="unit"
@@ -222,6 +254,7 @@ export default function ProductForm() {
                         onChange={handleChange}
                         placeholder="e.g. pcs, kg, box"
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                        disabled={loading}
                     />
                 </div>
 
@@ -233,8 +266,11 @@ export default function ProductForm() {
                         checked={formData.is_available}
                         onChange={handleChange}
                         className="w-5 h-5 text-blue-600 border-gray-300 rounded"
+                        disabled={loading}
                     />
-                    <label className="text-gray-700 font-medium">Available</label>
+                    <label className="text-gray-700 font-medium">
+                        Available
+                    </label>
                 </div>
 
                 {/* Image */}
@@ -247,6 +283,7 @@ export default function ProductForm() {
                         name="image_path"
                         onChange={handleChange}
                         className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                        disabled={loading}
                     />
                 </div>
 
@@ -254,9 +291,40 @@ export default function ProductForm() {
                 <div className="md:col-span-2 flex justify-end">
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+                        disabled={loading}
+                        className={`px-6 py-2 rounded-lg shadow text-white transition flex items-center gap-2
+                        ${loading
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700"
+                            }`}
                     >
-                        Save Product
+                        {loading ? (
+                            <>
+                                <svg
+                                    className="animate-spin h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v8H4z"
+                                    ></path>
+                                </svg>
+                                Saving...
+                            </>
+                        ) : (
+                            "Save Product"
+                        )}
                     </button>
                 </div>
             </form>
