@@ -13,7 +13,18 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("Manager");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ Loading state
 
+  // ✅ Name validation (no digits allowed)
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+
+    if (/^[A-Za-z\s]*$/.test(value)) {
+      setName(value);
+    }
+  };
+
+  // Contact number validation
   const handleContactNumberChange = (e) => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && value.length <= 11) {
@@ -21,7 +32,7 @@ export default function Register() {
     }
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
     if (!name || !email || !contactNumber || !password || !confirmPassword) {
@@ -40,6 +51,7 @@ export default function Register() {
     }
 
     setError("");
+    setLoading(true); // ✅ Start loading
 
     const requestData = {
       name,
@@ -49,27 +61,25 @@ export default function Register() {
       role,
     };
 
-    console.log("Sending data:", requestData);
-
-    http
-      .post("/register", requestData)
-      .then((response) => {
-        console.log("Registration successful:", response.data);
-        navigate("/login");
-      })
-      .catch((err) => {
-        console.error("Registration failed:", err);
-        if (err.response?.data?.errors) {
-          const validationErrors = err.response.data.errors;
-          const errorMessages = Object.values(validationErrors).flat();
-          setError(errorMessages.join(", "));
-        } else {
-          setError(
-            err.response?.data?.message ||
-            "Something went wrong. Please try again."
-          );
-        }
-      });
+    try {
+      const response = await http.post("/register", requestData);
+      console.log("Registration successful:", response.data);
+      navigate("/login");
+    } catch (err) {
+      console.error("Registration failed:", err);
+      if (err.response?.data?.errors) {
+        const validationErrors = err.response.data.errors;
+        const errorMessages = Object.values(validationErrors).flat();
+        setError(errorMessages.join(", "));
+      } else {
+        setError(
+          err.response?.data?.message ||
+          "Something went wrong. Please try again."
+        );
+      }
+    } finally {
+      setLoading(false); // ✅ Stop loading
+    }
   };
 
   return (
@@ -94,9 +104,13 @@ export default function Register() {
               type="text"
               placeholder="Enter name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              disabled={loading}
             />
+            <small className="text-gray-400 text-xs mt-1">
+              Only letters allowed (no numbers)
+            </small>
           </div>
 
           {/* Email */}
@@ -108,6 +122,7 @@ export default function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              disabled={loading}
             />
           </div>
 
@@ -123,6 +138,7 @@ export default function Register() {
               onChange={handleContactNumberChange}
               maxLength={11}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              disabled={loading}
             />
             {contactNumber.length > 0 && contactNumber.length !== 11 && (
               <small className="text-red-500 text-xs mt-1">
@@ -140,6 +156,7 @@ export default function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              disabled={loading}
             />
           </div>
 
@@ -154,6 +171,7 @@ export default function Register() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              disabled={loading}
             />
           </div>
 
@@ -164,6 +182,7 @@ export default function Register() {
               value={role}
               onChange={(e) => setRole(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              disabled={loading}
             >
               <option value="Manager">Manager</option>
               <option value="Customer">Customer</option>
@@ -173,9 +192,40 @@ export default function Register() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full py-3 bg-[#d87c28] text-white font-bold rounded-lg hover:bg-[#b96220] transition-colors"
+            disabled={loading}
+            className={`w-full py-3 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2
+              ${loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#d87c28] hover:bg-[#b96220]"
+              }`}
           >
-            Register
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                Signing Up...
+              </>
+            ) : (
+              "Register"
+            )}
           </button>
         </form>
 

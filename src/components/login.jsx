@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import AuthUser from "./AuthUser";
@@ -9,34 +8,42 @@ import { LoginContext } from "../context/login";
 function Login() {
   const navigate = useNavigate();
   const { http, setToken } = AuthUser();
+  const { setLoged } = useContext(LoginContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
-  const { setLoged } = useContext(LoginContext);
+  const [loading, setLoading] = useState(false); // ✅ Loading state
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true); // ✅ Start loading
 
-    http
-      .post("/login", { email, password })
-      .then((res) => {
-        setToken(res.data.user, res.data.access_token);
-        setLoged(true);
-        toast.success("Login successful!");
-        if(JSON.parse(localStorage.getItem('user')).role == 'Manager'){
-          navigate("/dashboard"); // navigate after login
-        }else{
-          navigate("/menu"); // navigate after login
-        }
-      })
-      .catch((err) => {
-        console.error("Login failed:", err);
-        const message =
-          err.response?.data?.message || "Invalid email or password";
-        setError(message);
-      });
+    try {
+      const res = await http.post("/login", { email, password });
+
+      setToken(res.data.user, res.data.access_token);
+      setLoged(true);
+
+      toast.success("Login successful!");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (user.role === "Manager") {
+        navigate("/dashboard");
+      } else {
+        navigate("/menu");
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
+      const message =
+        err.response?.data?.message || "Invalid email or password";
+      setError(message);
+    } finally {
+      setLoading(false); // ✅ Stop loading
+    }
   };
 
   return (
@@ -55,9 +62,11 @@ function Login() {
 
         <form onSubmit={submitForm} className="space-y-4">
 
-       
+          {/* Email */}
           <div className="flex flex-col">
-            <label className="text-[#a08c8c] font-bold mb-1">Email Address</label>
+            <label className="text-[#a08c8c] font-bold mb-1">
+              Email Address
+            </label>
             <input
               type="email"
               value={email}
@@ -65,10 +74,11 @@ function Login() {
               placeholder="Enter your email"
               className="px-4 py-2 border border-[#e0d8cd] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d28f5d] text-[#6b4f4f]"
               required
+              disabled={loading}
             />
           </div>
 
-         
+          {/* Password */}
           <div className="flex flex-col relative">
             <label className="text-[#a08c8c] font-bold mb-1">Password</label>
             <input
@@ -78,19 +88,20 @@ function Login() {
               placeholder="Enter your password"
               className="px-4 py-2 border border-[#e0d8cd] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d28f5d] text-[#6b4f4f]"
               required
+              disabled={loading}
             />
             <div
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#a08c8c] cursor-pointer"
-              onClick={() => setPasswordVisible(!passwordVisible)}
+              onClick={() => !loading && setPasswordVisible(!passwordVisible)}
             >
               {passwordVisible ? <FaEyeSlash /> : <FaEye />}
             </div>
           </div>
 
-          
+          {/* Remember + Forgot */}
           <div className="flex justify-between items-center text-sm text-[#a08c8c]">
             <label className="flex items-center gap-2">
-              <input type="checkbox" />
+              <input type="checkbox" disabled={loading} />
               Remember me
             </label>
             <Link
@@ -101,12 +112,43 @@ function Login() {
             </Link>
           </div>
 
-         
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-tr from-[#e59c69] to-[#d28f5d] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1"
+            disabled={loading}
+            className={`w-full py-3 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2
+              ${loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-tr from-[#e59c69] to-[#d28f5d] hover:shadow-xl transform hover:-translate-y-1"
+              }`}
           >
-            Sign In
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 
@@ -127,7 +169,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
-
