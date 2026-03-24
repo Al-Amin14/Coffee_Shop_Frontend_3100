@@ -13,18 +13,18 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("Manager");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ Loading state
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Name validation (no digits allowed)
+  // Name validation (only letters & spaces)
   const handleNameChange = (e) => {
     const value = e.target.value;
-
     if (/^[A-Za-z\s]*$/.test(value)) {
       setName(value);
     }
   };
 
-  // Contact number validation
+  // Contact number validation (only digits, max 11)
   const handleContactNumberChange = (e) => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && value.length <= 11) {
@@ -35,23 +35,46 @@ export default function Register() {
   const submitForm = async (e) => {
     e.preventDefault();
 
+    setError("");
+    setSuccess("");
+
+    // Required fields
     if (!name || !email || !contactNumber || !password || !confirmPassword) {
       setError("All fields are required.");
       return;
     }
 
+    // Email validation
+    const emailRegex =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    // Contact number must be exactly 11 digits
     if (contactNumber.length !== 11) {
       setError("Contact number must be exactly 11 digits.");
       return;
     }
 
+    // Password strength validation
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters, include 1 uppercase letter and 1 number."
+      );
+      return;
+    }
+
+    // Confirm password match
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    setError("");
-    setLoading(true); // ✅ Start loading
+    setLoading(true);
 
     const requestData = {
       name,
@@ -64,7 +87,13 @@ export default function Register() {
     try {
       const response = await http.post("/register", requestData);
       console.log("Registration successful:", response.data);
-      navigate("/login");
+
+      setSuccess("Registration Successful! Redirecting...");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+
     } catch (err) {
       console.error("Registration failed:", err);
       if (err.response?.data?.errors) {
@@ -78,7 +107,7 @@ export default function Register() {
         );
       }
     } finally {
-      setLoading(false); // ✅ Stop loading
+      setLoading(false);
     }
   };
 
@@ -88,100 +117,103 @@ export default function Register() {
         <h1 className="text-3xl font-bold text-[#5a2d0c] text-center mb-2">
           Create Your Account
         </h1>
+
         <p className="text-center text-gray-500 mb-6 text-sm">
           It only takes a minute.
         </p>
 
+        {/* Error Message */}
         {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          <p className="text-red-500 text-sm mb-4 text-center">
+            {error}
+          </p>
+        )}
+
+        {/* Success Message */}
+        {success && (
+          <p className="text-green-600 text-sm mb-4 text-center">
+            {success}
+          </p>
         )}
 
         <form onSubmit={submitForm} className="space-y-4">
+
           {/* Name */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">Name</label>
+          <div>
+            <label className="font-medium">Name</label>
             <input
               type="text"
-              placeholder="Enter name"
               value={name}
               onChange={handleNameChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              placeholder="Enter name"
+              className="w-full px-4 py-2 border rounded-lg"
               disabled={loading}
             />
-            <small className="text-gray-400 text-xs mt-1">
-              Only letters allowed (no numbers)
+            <small className="text-gray-400 text-xs">
+              Only letters allowed
             </small>
           </div>
 
           {/* Email */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">Email</label>
+          <div>
+            <label className="font-medium">Email</label>
             <input
               type="email"
-              placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              placeholder="Enter email"
+              className="w-full px-4 py-2 border rounded-lg"
               disabled={loading}
             />
           </div>
 
-          {/* Contact Number */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Contact Number
-            </label>
+          {/* Contact */}
+          <div>
+            <label className="font-medium">Contact Number</label>
             <input
               type="text"
-              placeholder="Enter 11-digit contact number"
               value={contactNumber}
               onChange={handleContactNumberChange}
               maxLength={11}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              placeholder="11 digit number"
+              className="w-full px-4 py-2 border rounded-lg"
               disabled={loading}
             />
-            {contactNumber.length > 0 && contactNumber.length !== 11 && (
-              <small className="text-red-500 text-xs mt-1">
-                Contact number must be exactly 11 digits ({contactNumber.length}/11)
-              </small>
-            )}
           </div>
 
           {/* Password */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">Password</label>
+          <div>
+            <label className="font-medium">Password</label>
             <input
               type="password"
-              placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              placeholder="Enter password"
+              className="w-full px-4 py-2 border rounded-lg"
               disabled={loading}
             />
           </div>
 
           {/* Confirm Password */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Confirm Password
-            </label>
+          <div>
+            <label className="font-medium">Confirm Password</label>
             <input
               type="password"
-              placeholder="Confirm password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              placeholder="Confirm password"
+              className="w-full px-4 py-2 border rounded-lg"
               disabled={loading}
             />
           </div>
 
           {/* Role */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">Your Role</label>
+          <div>
+            <label className="font-medium">Role</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d87c28]"
+              className="w-full px-4 py-2 border rounded-lg"
               disabled={loading}
             >
               <option value="Manager">Manager</option>
@@ -193,46 +225,19 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2
-              ${loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#d87c28] hover:bg-[#b96220]"
+            className={`w-full py-3 text-white rounded-lg font-bold ${loading
+              ? "bg-gray-400"
+              : "bg-[#d87c28] hover:bg-[#b96220]"
               }`}
           >
-            {loading ? (
-              <>
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
-                </svg>
-                Signing Up...
-              </>
-            ) : (
-              "Register"
-            )}
+            {loading ? "Signing Up..." : "Register"}
           </button>
         </form>
 
-        <p className="text-center text-gray-600 mt-4 text-sm">
+        <p className="text-center text-sm mt-4">
           Already have an account?{" "}
           <span
-            className="text-[#d87c28] font-bold cursor-pointer hover:underline"
+            className="text-[#d87c28] cursor-pointer font-bold"
             onClick={() => navigate("/login")}
           >
             Sign In

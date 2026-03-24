@@ -16,100 +16,102 @@ export default function ProductForm() {
         unit: "",
         is_available: false,
         image_path: null,
-        created_at: "",
-        updated_at: "",
     });
 
-    const [toast, setToast] = useState({ message: "", type: "" });
-    const [loading, setLoading] = useState(false); // ✅ Loading state
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [preview, setPreview] = useState(null);
 
-    // Handle input changes
+    // 🔴 Validation
+    const validateField = (name, value) => {
+        let error = "";
+
+        if (name !== "is_available" && !value) {
+            error = "This field is required";
+        }
+
+        if (["product_name", "description", "category", "unit"].includes(name)) {
+            if (/\d/.test(value)) error = "No numbers allowed";
+        }
+
+        if (["price", "stock_quantity", "discount"].includes(name)) {
+            if (value && isNaN(value)) error = "Only numbers allowed";
+        }
+
+        if (name === "price" && value) {
+            if (parseFloat(value) <= 65) {
+                error = "Price must be greater than 65";
+            }
+        }
+
+        if (name === "image_path" && value) {
+            if (!value.type.startsWith("image/")) {
+                error = "Only image files allowed";
+            }
+        }
+
+        return error;
+    };
+
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
 
-        setFormData({
-            ...formData,
-            [name]:
-                type === "checkbox"
-                    ? checked
-                    : type === "file"
-                        ? files[0]
-                        : value,
-        });
-    };
+        const newValue =
+            type === "checkbox"
+                ? checked
+                : type === "file"
+                    ? files[0]
+                    : value;
 
-    // Show toast
-    const showToast = (message, type = "success") => {
-        setToast({ message, type });
-        setTimeout(() => setToast({ message: "", type: "" }), 3000);
+        setFormData({ ...formData, [name]: newValue });
+
+        const error = validateField(name, newValue);
+        setErrors({ ...errors, [name]: error });
+
+        // Image preview
+        if (name === "image_path" && files[0]) {
+            setPreview(URL.createObjectURL(files[0]));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let imageUrl = "";
+
+        let newErrors = {};
+        Object.keys(formData).forEach((key) => {
+            const error = validateField(key, formData[key]);
+            if (error) newErrors[key] = error;
+        });
+
+        setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) return;
 
         try {
-            setLoading(true); // ✅ Start loading
+            setLoading(true);
 
-            // Upload image to Cloudinary if present
-            if (formData.image_path) {
-                const imageData = new FormData();
-                imageData.append("file", formData.image_path);
-                imageData.append("upload_preset", "insta_clone");
-                imageData.append("cloud_name", "clouding1");
+            const imageData = new FormData();
+            imageData.append("file", formData.image_path);
+            imageData.append("upload_preset", "insta_clone");
 
-                const cloudRes = await fetch(
-                    "https://api.cloudinary.com/v1_1/clouding1/image/upload",
-                    {
-                        method: "POST",
-                        body: imageData,
-                    }
-                );
+            const resImg = await fetch(
+                "https://api.cloudinary.com/v1_1/clouding1/image/upload",
+                { method: "POST", body: imageData }
+            );
 
-                const cloudData = await cloudRes.json();
+            const imgData = await resImg.json();
 
-                if (!cloudRes.ok) {
-                    throw new Error("Failed to upload image");
-                }
-
-                imageUrl = cloudData.url;
-            }
-
-            // Prepare data
-            const dataToSend = { ...formData, image_path: imageUrl };
-
-            // Send to Laravel API
-            const res = await http.post("/addproduct", dataToSend);
+            const res = await http.post("/addproduct", {
+                ...formData,
+                image_path: imgData.url,
+            });
 
             if (res.data.success) {
-                showToast("Product created successfully!", "success");
-
-                // Reset form
-                setFormData({
-                    product_name: "",
-                    description: "",
-                    category: "",
-                    price: "",
-                    discount: "",
-                    stock_quantity: "",
-                    unit: "",
-                    is_available: false,
-                    image_path: null,
-                    created_at: "",
-                    updated_at: "",
-                });
-            } else {
-                showToast("Failed to create product.", "error");
+                alert("✅ Product Added Successfully!");
             }
         } catch (err) {
-            console.error("Error:", err);
-            const message =
-                err.response?.data?.message ||
-                err.message ||
-                "An error occurred";
-            showToast(message, "error");
+            alert("❌ Error occurred");
         } finally {
-            setLoading(false); // ✅ Stop loading
+            setLoading(false);
         }
     };
 
@@ -119,215 +121,177 @@ export default function ProductForm() {
         }
     }, [navigate]);
 
+    // 🎨 Dynamic style
+    const inputStyle = (name) =>
+        `w-full p-3 rounded-xl border transition-all duration-200 focus:outline-none 
+        ${errors[name]
+            ? "border-red-500 focus:ring-2 focus:ring-red-300"
+            : formData[name]
+                ? "border-green-500 focus:ring-2 focus:ring-green-300"
+                : "border-gray-300 focus:ring-2 focus:ring-blue-300"
+        }`;
+
     return (
-        <div className="max-w-2xl mx-auto bg-white shadow-xl rounded-2xl p-6 mt-10 relative">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                Add / Update Product
-            </h2>
+        <div className="min-h-screen bg-gradient-to-br mx-auto from-blue-50 to-indigo-100 flex items-center justify-center p-6">
+            <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-8">
+                <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+                    🛍️ Add New Product
+                </h2>
 
-            {/* Toast Notification */}
-            {toast.message && (
-                <div
-                    className={`fixed top-5 right-5 px-4 py-2 rounded shadow-lg text-white font-semibold transition-opacity
-                    ${toast.type === "success"
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                        }`}
+                <form
+                    onSubmit={handleSubmit}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-5"
                 >
-                    {toast.message}
-                </div>
-            )}
+                    {/* Product Name */}
+                    <div>
+                        <input
+                            name="product_name"
+                            placeholder="Product Name"
+                            value={formData.product_name}
+                            onChange={handleChange}
+                            className={inputStyle("product_name")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.product_name}
+                        </p>
+                    </div>
 
-            <form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-            >
-                {/* Product Name */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Product Name
-                    </label>
-                    <input
-                        type="text"
-                        name="product_name"
-                        value={formData.product_name}
-                        onChange={handleChange}
-                        placeholder="Enter product name"
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        required
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Category */}
+                    <div>
+                        <input
+                            name="category"
+                            placeholder="Category"
+                            value={formData.category}
+                            onChange={handleChange}
+                            className={inputStyle("category")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.category}
+                        </p>
+                    </div>
 
-                {/* Category */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Category
-                    </label>
-                    <input
-                        type="text"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleChange}
-                        placeholder="Enter category"
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Description */}
+                    <div className="md:col-span-2">
+                        <textarea
+                            name="description"
+                            placeholder="Description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            className={inputStyle("description")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.description}
+                        </p>
+                    </div>
 
-                {/* Description */}
-                <div className="md:col-span-2">
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Description
-                    </label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        placeholder="Enter product description"
-                        className="w-full border rounded-lg p-2 h-20 focus:ring-2 focus:ring-blue-500"
-                        disabled={loading}
-                    ></textarea>
-                </div>
+                    {/* Price */}
+                    <div>
+                        <input
+                            type="number"
+                            name="price"
+                            placeholder="Price ($)"
+                            value={formData.price}
+                            onChange={handleChange}
+                            className={inputStyle("price")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.price}
+                        </p>
+                    </div>
 
-                {/* Price */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Price ($)
-                    </label>
-                    <input
-                        type="number"
-                        name="price"
-                        step="0.01"
-                        value={formData.price}
-                        onChange={handleChange}
-                        placeholder="0.00"
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        required
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Discount */}
+                    <div>
+                        <input
+                            type="number"
+                            name="discount"
+                            placeholder="Discount (%)"
+                            value={formData.discount}
+                            onChange={handleChange}
+                            className={inputStyle("discount")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.discount}
+                        </p>
+                    </div>
 
-                {/* Discount */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Discount (%)
-                    </label>
-                    <input
-                        type="number"
-                        name="discount"
-                        step="0.01"
-                        value={formData.discount}
-                        onChange={handleChange}
-                        placeholder="0.00"
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Stock */}
+                    <div>
+                        <input
+                            type="number"
+                            name="stock_quantity"
+                            placeholder="Stock Quantity"
+                            value={formData.stock_quantity}
+                            onChange={handleChange}
+                            className={inputStyle("stock_quantity")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.stock_quantity}
+                        </p>
+                    </div>
 
-                {/* Stock Quantity */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Stock Quantity
-                    </label>
-                    <input
-                        type="number"
-                        name="stock_quantity"
-                        value={formData.stock_quantity}
-                        onChange={handleChange}
-                        placeholder="0"
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        required
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Unit */}
+                    <div>
+                        <input
+                            name="unit"
+                            placeholder="Unit (kg, pcs...)"
+                            value={formData.unit}
+                            onChange={handleChange}
+                            className={inputStyle("unit")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.unit}
+                        </p>
+                    </div>
 
-                {/* Unit */}
-                <div>
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Unit
-                    </label>
-                    <input
-                        type="text"
-                        name="unit"
-                        value={formData.unit}
-                        onChange={handleChange}
-                        placeholder="e.g. pcs, kg, box"
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Image Upload */}
+                    <div className="md:col-span-2">
+                        <label className="block mb-2 font-medium text-gray-600">
+                            Upload Product Image
+                        </label>
+                        <input
+                            type="file"
+                            name="image_path"
+                            onChange={handleChange}
+                            className={inputStyle("image_path")}
+                        />
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.image_path}
+                        </p>
 
-                {/* Availability */}
-                <div className="flex items-center space-x-2">
-                    <input
-                        type="checkbox"
-                        name="is_available"
-                        checked={formData.is_available}
-                        onChange={handleChange}
-                        className="w-5 h-5 text-blue-600 border-gray-300 rounded"
-                        disabled={loading}
-                    />
-                    <label className="text-gray-700 font-medium">
-                        Available
-                    </label>
-                </div>
+                        {/* Preview */}
+                        {preview && (
+                            <img
+                                src={preview}
+                                alt="preview"
+                                className="mt-3 w-32 h-32 object-cover rounded-xl shadow"
+                            />
+                        )}
+                    </div>
 
-                {/* Image */}
-                <div className="md:col-span-2">
-                    <label className="block text-gray-700 font-medium mb-2">
-                        Product Image
-                    </label>
-                    <input
-                        type="file"
-                        name="image_path"
-                        onChange={handleChange}
-                        className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                        disabled={loading}
-                    />
-                </div>
+                    {/* Availability */}
+                    <div className="flex items-center gap-3 md:col-span-2">
+                        <input
+                            type="checkbox"
+                            name="is_available"
+                            checked={formData.is_available}
+                            onChange={handleChange}
+                            className="w-5 h-5"
+                        />
+                        <label className="text-gray-700 font-medium">
+                            Available
+                        </label>
+                    </div>
 
-                {/* Submit */}
-                <div className="md:col-span-2 flex justify-end">
+                    {/* Submit */}
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`px-6 py-2 rounded-lg shadow text-white transition flex items-center gap-2
-                        ${loading
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700"
-                            }`}
+                        className="md:col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition flex justify-center items-center"
                     >
-                        {loading ? (
-                            <>
-                                <svg
-                                    className="animate-spin h-5 w-5 text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8v8H4z"
-                                    ></path>
-                                </svg>
-                                Saving...
-                            </>
-                        ) : (
-                            "Save Product"
-                        )}
+                        {loading ? "Saving..." : "✨ Save Product"}
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     );
 }

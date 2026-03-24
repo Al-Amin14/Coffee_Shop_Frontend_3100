@@ -43,14 +43,14 @@ const PaymentPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
- 
+
   const [updatingItemId, setUpdatingItemId] = useState(null);
 
   const [total, setTotal] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  
+
   const [totalFlash, setTotalFlash] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -109,12 +109,12 @@ const PaymentPage = () => {
     } catch {
       toast.error("Failed to increase quantity");
     } finally {
-      setUpdatingItemId(null); 
+      setUpdatingItemId(null);
     }
   };
 
   const decreaseQty = async (cartId) => {
-    setUpdatingItemId(cartId); 
+    setUpdatingItemId(cartId);
     try {
       await axios.put(
         `http://localhost:8000/api/cart/decrement/${cartId}`,
@@ -130,9 +130,9 @@ const PaymentPage = () => {
           .map((item) =>
             item.id === cartId
               ? {
-                  ...item,
-                  quantity: Math.max(Number(item.quantity) - 1, 0),
-                }
+                ...item,
+                quantity: Math.max(Number(item.quantity) - 1, 0),
+              }
               : item
           )
           .filter((item) => item.quantity > 0)
@@ -140,7 +140,7 @@ const PaymentPage = () => {
     } catch {
       toast.error("Failed to decrease quantity");
     } finally {
-      setUpdatingItemId(null); 
+      setUpdatingItemId(null);
     }
   };
 
@@ -164,9 +164,9 @@ const PaymentPage = () => {
       const payload = cartItems.map((item) => ({
         product_name: String(
           item.product_name ||
-            item.name ||
-            item.product?.product_name ||
-            "Coffee Product"
+          item.name ||
+          item.product?.product_name ||
+          "Coffee Product"
         ),
         amount: Math.round(Number(item.unit_price)),
         quantity: Number(item.quantity) || 1,
@@ -200,7 +200,7 @@ const PaymentPage = () => {
       console.error(err);
       setError(
         err.response?.data?.error ||
-          "Failed to create checkout session"
+        "Failed to create checkout session"
       );
     } finally {
       setLoading(false);
@@ -215,7 +215,7 @@ const PaymentPage = () => {
     );
     setTotal(totalAmount);
 
- 
+
     setTotalFlash(true);
     const timer = setTimeout(() => setTotalFlash(false), 300);
     return () => clearTimeout(timer);
@@ -231,7 +231,7 @@ const PaymentPage = () => {
 
   if (loading && cartItems.length === 0) {
     return (
-      <div className="flex items-center justify-center h-screen bg-amber-50">
+      <div className="flex items-center justify-center w-full h-screen bg-amber-50">
         <Loader2 className="h-10 w-10 text-amber-600 animate-spin" />
         <p className="ml-3 text-lg font-medium">
           Loading your cart...
@@ -323,9 +323,8 @@ const PaymentPage = () => {
               )}
 
               <div
-                className={`flex justify-between font-black text-gray-900 mt-6 pt-4 border-t-2 border-dashed border-gray-200 transition-colors ${
-                  totalFlash ? "text-amber-600" : ""
-                }`}
+                className={`flex justify-between font-black text-gray-900 mt-6 pt-4 border-t-2 border-dashed border-gray-200 transition-colors ${totalFlash ? "text-amber-600" : ""
+                  }`}
               >
                 <span className="text-lg">GRAND TOTAL</span>
                 <span className="text-2xl text-amber-700">

@@ -170,67 +170,82 @@ const MenuPage = () => {
             {/* Chatbot Button */}
             <button
                 onClick={() => setIsChatOpen(!isChatOpen)}
-                className="fixed bottom-6 right-6 bg-yellow-600 text-white p-4 rounded-full shadow-lg hover:bg-yellow-700 transition"
+                className="fixed bottom-6 right-6 bg-gray-800 text-white px-4 py-3 rounded-full shadow-md hover:bg-gray-900 transition"
             >
-                {isChatOpen ? "✖" : "💬"}
+                {isChatOpen ? "Close" : "Chat"}
             </button>
 
             {/* Chatbot UI */}
             {isChatOpen && (
-                <div className="fixed bottom-20 right-6 w-80 bg-white rounded-2xl shadow-xl border p-4 flex flex-col">
-                    <div className="flex justify-between items-center border-b pb-2 mb-2">
-                        <h2 className="text-lg font-bold text-yellow-700">Coffee Assistant</h2>
-                        <button onClick={() => setIsChatOpen(false)} className="text-gray-500 hover:text-red-500">
-                            ✖
+                <div className="fixed bottom-20 right-6 w-80 bg-white border border-gray-300 rounded-lg shadow-lg flex flex-col">
+
+                    {/* Header */}
+                    <div className="flex justify-between items-center px-4 py-3 border-b bg-gray-100">
+                        <h2 className="text-md font-semibold text-gray-700">
+                            Coffee Assistant
+                        </h2>
+                        <button
+                            onClick={() => setIsChatOpen(false)}
+                            className="text-gray-500 hover:text-black"
+                        >
+                            ✕
                         </button>
                     </div>
 
-                    <div className="flex-1 p-2 space-y-2 overflow-y-auto h-48">
+                    {/* Messages */}
+                    <div className="flex-1 p-3 space-y-2 overflow-y-auto h-52 bg-white">
                         {messages.map((msg, i) => (
                             <div
                                 key={i}
-                                className={`p-2 rounded-lg max-w-[80%] ${msg.role === "user"
-                                    ? "bg-yellow-100 ml-auto text-right"
-                                    : "bg-gray-100 mr-auto text-left"
+                                className={`px-3 py-2 rounded-md text-sm max-w-[85%] ${msg.role === "user"
+                                        ? "bg-gray-200 ml-auto text-right"
+                                        : "bg-gray-100 mr-auto text-left"
                                     }`}
                             >
                                 {msg.text}
                             </div>
                         ))}
+
                         {loadingMessage && (
-                            <div className="text-sm text-gray-400">⏳ Generating response...</div>
+                            <div className="text-xs text-gray-400">
+                                Generating response...
+                            </div>
                         )}
                     </div>
 
                     {/* Fixed Questions */}
-                    <div className="grid grid-cols-1 gap-2 mt-3">
+                    <div className="p-3 space-y-2 border-t bg-gray-50">
                         <button
                             onClick={() => askBot("Which product should I choose?")}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg text-sm"
+                            className="w-full bg-gray-800 text-white py-2 rounded-md text-sm hover:bg-gray-900 transition"
                         >
                             Which product should I choose?
                         </button>
+
                         <button
                             onClick={() => askBot("Give me a description about the best coffee.")}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg text-sm"
+                            className="w-full bg-gray-800 text-white py-2 rounded-md text-sm hover:bg-gray-900 transition"
                         >
                             Best coffee description
                         </button>
+
                         <button
                             onClick={() => askBot("Recommend me one coffee like this.")}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg text-sm"
+                            className="w-full bg-gray-800 text-white py-2 rounded-md text-sm hover:bg-gray-900 transition"
                         >
                             Recommend one coffee
                         </button>
+
                         <button
                             onClick={() => askBot("What is the most popular coffee?")}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg text-sm"
+                            className="w-full bg-gray-800 text-white py-2 rounded-md text-sm hover:bg-gray-900 transition"
                         >
                             What is the most popular coffee?
                         </button>
+
                         <button
                             onClick={() => askBot("Which coffee is best for morning?")}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg text-sm"
+                            className="w-full bg-gray-800 text-white py-2 rounded-md text-sm hover:bg-gray-900 transition"
                         >
                             Which coffee is best for morning?
                         </button>

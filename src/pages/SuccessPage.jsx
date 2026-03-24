@@ -9,7 +9,7 @@ const SuccessPage = () => {
   const [order, setOrder] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const sessionId = searchParams.get("session_id");
 
   useEffect(() => {
@@ -75,7 +75,7 @@ const SuccessPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50 flex flex-col items-center p-8">
+    <div className="min-h-screen w-full bg-amber-50 flex flex-col items-center p-8">
       <div className="text-center mb-10">
         <CheckCircle className="text-green-500 mx-auto mb-4" size={60} />
         <h1 className="text-4xl font-black text-gray-800">PAID!</h1>
@@ -103,12 +103,12 @@ const SuccessPage = () => {
             <span>৳{Number(order?.total_amount).toFixed(2)}</span>
           </div>
         </div>
-        
+
         {/* Zig-Zag Edge */}
         <div className="h-4 bg-white" style={{ clipPath: "polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%)" }}></div>
       </div>
 
-      <div className="mt-12 flex gap-4 no-print">
+      <div className="mt-12 flex item-center justify-center gap-4 no-print w-full">
         <button onClick={() => window.print()} className="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold flex items-center hover:bg-black transition-colors">
           <Printer size={18} className="mr-2" /> Print Slip
         </button>
