@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  FaHome, FaList, FaShoppingCart, FaChartBar, FaPhone, FaSignOutAlt, FaPlus
+  FaHome, FaList, FaShoppingCart, FaPhone, FaSignOutAlt, FaPlus
 } from "react-icons/fa";
 import { RiListOrdered2 } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
@@ -13,7 +13,32 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { loged, setLoged } = useContext(LoginContext);
-  const { logout } = AuthUser();
+  const { logout, http } = AuthUser();
+
+  const [customerCount, setCustomerCount] = useState(0); // ✅ NEW
+
+  // ✅ Fetch users and count customers
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await http.get("/users"); // uses baseURL
+
+        if (res.data.success) {
+          const users = res.data.users;
+
+          const customers = users.filter(
+            (user) => user.role === "Customer"
+          );
+
+          setCustomerCount(customers.length);
+        }
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
@@ -27,9 +52,8 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     if (window.confirm("Do you want to log out?")) {
-      logout();          // <-- Use AuthUser's logout for clearing session + redirect
-      setLoged(false);   // <-- Update login context state
-      // navigate("/login"); // Not needed, logout handles navigation
+      logout();
+      setLoged(false);
     }
   };
 
@@ -39,9 +63,19 @@ const Sidebar = () => {
 
   return (
     <div className="h-screen w-[20%] bg-[#4b2e2e] text-[#f5f0e6] flex flex-col shadow-lg">
-      <div className="p-6 text-2xl font-bold text-center border-b border-[#6f4e37]">
-        CoffeeSync
+      <div className="flex item-center p-4">
+        <div>Total user : </div>
+        <div className="pl-2 text-center text-lg font-semibold">
+           {customerCount}
+        </div>
       </div>
+      <div className="justify-center items-center">
+
+        <div className="p-6 text-2xl font-bold text-center border-b border-[#6f4e37]">
+          CoffeeSync
+        </div>
+      </div>
+
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -69,6 +103,7 @@ const Sidebar = () => {
           </button>)
         })}
       </nav>
+
       {loged ? (
         <button
           onClick={handleLogout}
@@ -83,9 +118,10 @@ const Sidebar = () => {
           className="flex items-center gap-3 w-full text-left p-3 rounded-lg hover:bg-[#7b4d35] hover:text-white m-4 mt-0 transition"
         >
           <span className="text-lg"><IoLogIn /></span>
-          <span>Log Out</span>
+          <span>Log In</span>
         </button>
       )}
+
       <div className="p-4 border-t border-[#6f4e37] text-sm text-[#d1c4b2] text-center">
         © 2025 CoffeeSync
       </div>
@@ -94,4 +130,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
