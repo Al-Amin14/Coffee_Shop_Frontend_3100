@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';  
 import { LoginContext } from './context/login';
 import Navbar from './components/Navbar';
 import Register from './components/registration';
@@ -8,21 +8,20 @@ import MenuPage from './pages/Menu';
 import Dashboard from './pages/DashBord';
 import ContactUs from './pages/ContactUs';
 import ProductForm from './pages/addproducts';
-import CartList from './pages/cart';
+import ChatList from './pages/charts';
 import Orders from './components/Orders';
 import Home from './pages/home';
 import { Toaster } from 'react-hot-toast';
-import Profile from './pages/Profile';
 import ProductDetails from './pages/ProductDetails';
-import SuccessPage from './pages/success';
+import SuccessPage from "./pages/SuccessPage";
 
 const App = () => {
-  const [loged, setLoged] = useState(null);
-  const location = useLocation();
+  const [loged, setLoged] = useState(null); 
+  const location = useLocation(); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setLoged(!!token);
+    setLoged(!!token); 
   }, []);
 
   if (loged === null) {
@@ -37,22 +36,24 @@ const App = () => {
         {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
 
         <Routes>
-          <Route path='/' element={<Home />} />
+          
+          <Route path='/' element={<Home/>} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/menu' element={<MenuPage />} />
           <Route path='/contact' element={<ContactUs />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/carts' element={<CartList />} />
+          <Route path='/charts' element={<ChatList />} />
           <Route path='/Orders' element={<Orders />} />
           <Route path='/productAdd' element={<ProductForm />} />
-          <Route path='/profile' element={<Profile/>}/>
           <Route path='/product/:id' element={<ProductDetails />} />
-          <Route path='/success' element={<SuccessPage />} />
-
+          <Route path="/success" element={<SuccessPage />} />
         </Routes>
+        
         <Toaster position="top-center" />
+        
       </LoginContext.Provider>
+      
     </div>
   );
 };
