@@ -36,9 +36,7 @@
 
 A comprehensive system to streamline coffee shop operations: order processing, billing/invoicing, and detailed customer records. Improves service speed, transaction accuracy, and organized data management—ultimately boosting operational efficiency and customer experience.
 
-**Course:** CSE 3100 (Software Development - IV), Section A1 — Fall 2024  
-**Instructors: Mr. Md. Zahid Hossain and Mr. Parvez Ahammed**  
-**University:** Ahsanullah University of Science and Technology (AUST), Bangladesh
+
 
 ---
 
