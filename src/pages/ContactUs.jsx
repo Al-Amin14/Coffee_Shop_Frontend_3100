@@ -5,14 +5,24 @@ import toast, { Toaster } from "react-hot-toast";
 
 const ContactUs = () => {
     const navigate = useNavigate();
+
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (!localStorage.getItem("token")) {
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (!token) {
             navigate("/login");
+        }
+
+        // ✅ Set name & email from localStorage
+        if (user) {
+            setName(user.name || "");
+            setEmail(user.email || "");
         }
     }, []);
 
@@ -35,7 +45,7 @@ const ContactUs = () => {
                     name,
                     email,
                     message,
-                    user_id: JSON.parse(token)?.user_id || null, // optional if you have user id
+                    user_id: JSON.parse(token)?.user_id || null,
                 },
                 {
                     headers: {
@@ -46,10 +56,7 @@ const ContactUs = () => {
 
             if (response.data.success) {
                 toast.success("Message sent successfully!");
-                // Clear form
-                setName("");
-                setEmail("");
-                setMessage("");
+                setMessage(""); // ✅ only message resets
             } else {
                 toast.error("Failed to send message");
             }
@@ -77,11 +84,9 @@ const ContactUs = () => {
                         <label className="block text-[#4b2e2e] mb-1">Your Name</label>
                         <input
                             type="text"
-                            placeholder="Enter your name"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6f4e37] border-[#d1c4b2]"
-                            required
+                            readOnly
+                            className="w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed border-[#d1c4b2]"
                         />
                     </div>
 
@@ -89,11 +94,9 @@ const ContactUs = () => {
                         <label className="block text-[#4b2e2e] mb-1">Email</label>
                         <input
                             type="email"
-                            placeholder="Enter your email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6f4e37] border-[#d1c4b2]"
-                            required
+                            readOnly
+                            className="w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed border-[#d1c4b2]"
                         />
                     </div>
 

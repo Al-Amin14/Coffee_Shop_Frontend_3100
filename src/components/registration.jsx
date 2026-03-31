@@ -60,7 +60,8 @@ export default function Register() {
 
     // Password strength validation
     const passwordRegex =
-      /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*\d).{8,}$/;
+    // /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
       setError(
         "Password must be at least 8 characters, include 1 uppercase letter and 1 number."
